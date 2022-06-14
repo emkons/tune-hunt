@@ -1,20 +1,12 @@
 import React, { useState } from 'react'
 
-const Content = () => {
+const Content = ({children}) => {
     const [loggedIn, setLoggedIn] = useState(false)
     // const [selectedPlaylist, setSelectedPlaylist] 
 
     return (
-        <section class="w-full bg-white">
-
-            <div class="mx-auto max-w-7xl">
-                <div class="flex flex-col lg:flex-row justify-center">
-                    <div class="w-full bg-white lg:w-8/12">
-                        
-                    </div>
-                </div>
-            </div>
-
+        <section className="w-full mx-auto lg:w-8/12 max-w-7xl bg-white flex flex-col flex-grow">
+            {children}
         </section>
     )
 }
