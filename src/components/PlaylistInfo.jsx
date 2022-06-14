@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 
 const PlaylistInfo = ({id, name, author, thumbnail, preText, link = '/', songCount}) => {
     return (

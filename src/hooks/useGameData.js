@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import useLocalStorage from './useLocalStorage';
 
 const useGameData = (playlistId, date) => {
@@ -29,6 +29,7 @@ const useGameData = (playlistId, date) => {
             setCorrect(data?.correct)
             setFinished(data?.finished)
         }
+        // eslint-disable-next-line
     }, [playlistData]);
 
     useEffect(() => {
@@ -45,6 +46,7 @@ const useGameData = (playlistId, date) => {
                 finished
             }
         })
+        // eslint-disable-next-line
     }, [todayTrack, guesses, correct, finished])
 
     return {

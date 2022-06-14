@@ -80,6 +80,7 @@ const Game = () => {
         setTodayTrack(track);
         console.log('Setting track')
     }
+    // eslint-disable-next-line
   }, [todayIndex, tracks]);
 
   const handleGuess = (track) => {
@@ -100,6 +101,7 @@ const Game = () => {
         name={playlistName}
         author={playlistAuthor}
         thumbnail={playlistImage}
+        link={playlistLink}
         preText="Currently playing"
       />
       <Guesses guesses={guesses} correctTrack={todayTrack} />
@@ -119,7 +121,7 @@ const Game = () => {
         name={playlistName}
         author={playlistAuthor}
         thumbnail={playlistImage}
-        link={todayTrack?.track?.external_urls?.spotify}
+        link={playlistLink}
         preText="Currently playing"
       />
       <Guesses guesses={guesses} correctTrack={todayTrack} />
@@ -130,6 +132,7 @@ const Game = () => {
         author={todayTrack?.track?.artists?.[0]?.name}
         thumbnail={todayTrack?.track?.album?.images?.[0]?.url}
         link={todayTrack?.track?.external_urls?.spotify}
+        correct={correct}
         preText="Correct Song"
       />
       {/* <AnswerInput tracks={tracks} onSubmit={handleGuess} /> */}

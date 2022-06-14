@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 const useLocalStorage = (storageKey, defaultValue) => {
     const [value, setValue] = useState(defaultValue);
@@ -18,6 +18,7 @@ const useLocalStorage = (storageKey, defaultValue) => {
         }
 
         localStorage.setItem(storageKey, JSON.stringify(value))
+        // eslint-disable-next-line
     }, [value])
 
     const updateValue = (newValue) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PauseCircle from "./icons/PauseCircle";
 import PlayCircle from "./icons/PlayCircle";
 
@@ -12,13 +12,10 @@ const roundParts = {
 };
 
 const Player = ({ url, round, finished }) => {
-  const [trackProgress, setTrackProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
 
   const audioRef = useRef();
-  const intervalRef = useRef();
-  const isReady = useRef(false);
 
   const timerRef = useRef(null);
   const animationRef = useRef(null);
@@ -44,6 +41,7 @@ const Player = ({ url, round, finished }) => {
       clearTimeout(timerRef.current);
       cancelAnimationFrame(animationRef.current);
     }
+    // eslint-disable-next-line
   }, [isPlaying, round]);
 
   const whilePlaying = () => {
