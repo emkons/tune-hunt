@@ -10,23 +10,26 @@ import Login from './pages/Login';
 import PlaylistSelect from './pages/PlaylistSelect';
 import Game from './pages/Game';
 import { SpotifyProvider } from './context/SpotifyContext';
+import { FavouritesProvider } from './context/FavouritesContext';
 
 function App() {
   return (
     <div className="h-screen flex flex-col">
       <BrowserRouter>
         <SpotifyProvider>
-          <Header></Header>
-          <Routes>
-            <Route path='/'>
-              <Route index element={<Login />} />
-              <Route path="playlist">
-                <Route index element={<PlaylistSelect />}/>
-                <Route path=":playlistId" element={<Game />} />
+          <FavouritesProvider>
+            <Header></Header>
+            <Routes>
+              <Route path='/'>
+                <Route index element={<Login />} />
+                <Route path="playlist">
+                  <Route index element={<PlaylistSelect />}/>
+                  <Route path=":playlistId" element={<Game />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-          <Footer></Footer>
+            </Routes>
+            <Footer></Footer>
+          </FavouritesProvider>
         </SpotifyProvider>
       </BrowserRouter>
     </div>

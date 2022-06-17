@@ -54,7 +54,7 @@ const Game = () => {
                 market: process.env.REACT_APP_SPOTIFY_MARKET,
                 fields: "items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.artists(name)),total,offset"
             })
-            allTracks = [...allTracks, newData.items]
+            allTracks = [...allTracks, ...newData.items]
             currentTracks += newData.items.length
             console.log('Additional tracks loaded', newData)
         }
@@ -102,6 +102,7 @@ const Game = () => {
         author={playlistAuthor}
         thumbnail={playlistImage}
         link={playlistLink}
+        external={true}
         preText="Currently playing"
       />
       <Guesses guesses={guesses} correctTrack={todayTrack} />
@@ -122,17 +123,20 @@ const Game = () => {
         author={playlistAuthor}
         thumbnail={playlistImage}
         link={playlistLink}
+        external={true}
         preText="Currently playing"
       />
       <Guesses guesses={guesses} correctTrack={todayTrack} />
       <Player url={todayTrack?.track.preview_url} round={guesses.length} finished={finished} />
       <PlaylistInfo
-        id={playlistId}
+        id={todayTrack?.track?.id}
         name={todayTrack?.track?.name}
         author={todayTrack?.track?.artists?.[0]?.name}
         thumbnail={todayTrack?.track?.album?.images?.[0]?.url}
         link={todayTrack?.track?.external_urls?.spotify}
         correct={correct}
+        external={true}
+        isPlaylist={false}
         preText="Correct Song"
       />
       {/* <AnswerInput tracks={tracks} onSubmit={handleGuess} /> */}

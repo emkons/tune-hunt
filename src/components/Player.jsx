@@ -51,9 +51,13 @@ const Player = ({ url, round, finished }) => {
 
   return (
     <div className="flex flex-row items-center gap-4">
-      <div className="w-full bg-gray-200 rounded-full h-2.5 flex-grow relative">
+      <div className="w-full bg-gray-400 rounded-full h-2.5 flex-grow relative overflow-hidden">
         <div
-          className="bg-blue-600 h-2.5 rounded-full"
+          className="bg-gray-200 h-2.5 absolute top-0 left-0 right-0 bottom-0"
+          style={{ width: `${(roundParts[round] / 16) / 10}%` }}
+        ></div>
+        <div
+          className="bg-blue-600 h-2.5 rounded-full absolute top-0 left-0 right-0 bottom-0"
           style={{ width: `${(currentTime / 16) * 100}%` }}
         ></div>
         <div className="markers divide-x flex absolute top-0 left-0 right-0 bottom-0 items-center">

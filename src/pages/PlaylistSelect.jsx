@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import Content from '../components/Content'
 import { parse } from 'spotify-uri'
 import PlaylistInfo from '../components/PlaylistInfo'
+import { useFavourites } from '../context/FavouritesContext'
 
 const PlaylistSelect = () => {
     const navigate = useNavigate()
     const [link, setLink] = useState('')
     const [error, setError] = useState('')
+    const {favourites} = useFavourites()
 
     const onTextChange = (event) => {
         setLink(event.target.value)
@@ -41,18 +43,15 @@ const PlaylistSelect = () => {
                     </form>
                     <p className="max-w-screen-sm text-lg text-gray-600 sm:text-2xl">or</p>
                     <p className="max-w-screen-sm text-lg text-gray-600 sm:text-2xl">Choose one from the list below</p>
-                    <PlaylistInfo
-                        name="All Out 80s"
-                        author="Spotify"
-                        thumbnail="https://i.scdn.co/image/ab67706f00000003e6ed19ecc791fce2ec58d005"
-                        link="/playlist/37i9dQZF1DX4UtSsGT1Sbe"
-                    />
-                    <PlaylistInfo
-                        name="All Out 90s"
-                        author="Spotify"
-                        thumbnail="https://i.scdn.co/image/ab67706f0000000379c2dd164d3c1a831a8a3a1e"
-                        link="/playlist/37i9dQZF1DXbTxeAdrVG2l"
-                    />
+                    {(favourites || []).map(fav => (
+                        <PlaylistInfo
+                            id={fav.id}
+                            name={fav.name}
+                            author={fav.author}
+                            thumbnail={fav.thumbnail}
+                            link={`/playlist/${fav.id}`}
+                        />
+                    ))}
                 </div>
             </div>
         </Content>
