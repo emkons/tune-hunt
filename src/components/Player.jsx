@@ -54,7 +54,7 @@ const Player = ({ url, round, finished }) => {
       <div className="w-full bg-gray-400 rounded-full h-2.5 flex-grow relative overflow-hidden">
         <div
           className="bg-gray-200 h-2.5 absolute top-0 left-0 right-0 bottom-0"
-          style={{ width: `${(roundParts[round] / 16) / 10}%` }}
+          style={{ width: `${(roundParts[(finished ? 5 : round)] / 16) / 10}%` }}
         ></div>
         <div
           className="bg-blue-600 h-2.5 rounded-full absolute top-0 left-0 right-0 bottom-0"
