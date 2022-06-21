@@ -13,7 +13,7 @@ const useLocalStorage = (storageKey, defaultValue) => {
     }, [storageKey]);
 
     useEffect(() => {
-        if (value && Object.keys(value).length === 0) {
+        if (value && typeof value !== 'number' && Object.keys(value).length === 0) {
             return
         }
 

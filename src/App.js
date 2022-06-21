@@ -11,20 +11,23 @@ import PlaylistSelect from './pages/PlaylistSelect';
 import Game from './pages/Game';
 import { SpotifyProvider } from './context/SpotifyContext';
 import { FavouritesProvider } from './context/FavouritesContext';
+import useLocalStorage from './hooks/useLocalStorage';
 
 function App() {
+  const [volume, setVolume] = useLocalStorage('volume', 50)
+
   return (
     <div className="h-screen flex flex-col">
       <BrowserRouter>
         <SpotifyProvider>
           <FavouritesProvider>
-            <Header></Header>
+            <Header volume={volume} setVolume={setVolume}></Header>
             <Routes>
               <Route path='/'>
                 <Route index element={<Login />} />
                 <Route path="playlist">
                   <Route index element={<PlaylistSelect />}/>
-                  <Route path=":playlistId" element={<Game />} />
+                  <Route path=":playlistId" element={<Game volume={volume} />} />
                 </Route>
               </Route>
             </Routes>

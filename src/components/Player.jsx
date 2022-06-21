@@ -11,7 +11,7 @@ const roundParts = {
   5: 16000,
 };
 
-const Player = ({ url, round, finished }) => {
+const Player = ({ url, round, finished, volume }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
 
@@ -26,7 +26,7 @@ const Player = ({ url, round, finished }) => {
 
   useEffect(() => {
     // TODO: Add audio control
-    audioRef.current.volume = 1;
+    audioRef.current.volume = volume / 100;
     if (isPlaying) {
       audioRef.current.play();
       timerRef.current = setTimeout(
@@ -43,6 +43,10 @@ const Player = ({ url, round, finished }) => {
     }
     // eslint-disable-next-line
   }, [isPlaying, round]);
+
+  useEffect(() => {
+    audioRef.current.volume = volume / 100;
+  }, [volume])
 
   const whilePlaying = () => {
     setCurrentTime(audioRef.current.currentTime);

@@ -12,7 +12,7 @@ import { getSequence } from "../utils/sequence";
 
 const startDate = moment([2022, 5, 13]);
 
-const Game = () => {
+const Game = ({volume}) => {
     const { playlistId } = useParams();
     const { apiInstance, removeToken } = useSpotify();
     const [tracks, setTracks] = useState([]);
@@ -138,6 +138,7 @@ const Game = () => {
                     />
                     <Guesses guesses={guesses} correctTrack={todayTrack} />
                     <Player
+                        volume={volume}
                         url={todayTrack?.track.preview_url}
                         round={guesses.length}
                     />
@@ -164,6 +165,7 @@ const Game = () => {
             />
             <Guesses guesses={guesses} correctTrack={todayTrack} />
             <Player
+                volume={volume}
                 url={todayTrack?.track.preview_url}
                 round={guesses.length}
                 finished={finished}
