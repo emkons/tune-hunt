@@ -38,7 +38,7 @@ const Guesses = ({ guesses, correctTrack = false }) => {
                 <>
                   {correct ? correctIcon : wrongIcon}
                   <div className="flex-grow">
-                      {`${guess?.track.name} - ${guess?.track?.artists?.[0].name}`}
+                      {`${guess?.track.name} - ${guess?.track?.artists.map(a => a?.name).join(', ')}`}
                   </div>
                 </>
               }
