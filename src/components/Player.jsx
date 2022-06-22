@@ -31,7 +31,7 @@ const Player = ({ url, round, finished, volume }) => {
       audioRef.current.play();
       timerRef.current = setTimeout(
         () => setIsPlaying(false),
-        finished ? 16000 : roundParts[round]
+        finished ? 30000 : roundParts[round]
       );
       animationRef.current = requestAnimationFrame(whilePlaying);
     } else {
@@ -58,11 +58,11 @@ const Player = ({ url, round, finished, volume }) => {
       <div className="w-full bg-gray-400 rounded-full h-2.5 flex-grow relative overflow-hidden">
         <div
           className="bg-gray-200 h-2.5 absolute top-0 left-0 right-0 bottom-0"
-          style={{ width: `${(roundParts[(finished ? 5 : round)] / 16) / 10}%` }}
+          style={{ width: `${finished ? 30000 : (roundParts[round] / 16) / 10}%` }}
         ></div>
         <div
           className="bg-blue-600 h-2.5 rounded-full absolute top-0 left-0 right-0 bottom-0"
-          style={{ width: `${(currentTime / 16) * 100}%` }}
+          style={{ width: `${(currentTime / (finished ? 30 : 16)) * 100}%` }}
         ></div>
         <div className="markers divide-x flex absolute top-0 left-0 right-0 bottom-0 items-center">
             <div className="border-gray-800 h-2" style={{width: `${1/16*100}%`}}></div>
