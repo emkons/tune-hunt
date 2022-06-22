@@ -26,7 +26,7 @@ const skippedIcon = (
 const Guesses = ({ guesses, correctTrack = false }) => {
     const guessCard = (guess, correct) => {
         return (
-            <div className="flex flex-row justify-center gap-3">
+            <div className="flex flex-row justify-center gap-3 w-full">
               {guess?.skipped ? (
                 <>
                   {skippedIcon}

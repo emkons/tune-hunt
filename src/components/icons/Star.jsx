@@ -1,11 +1,11 @@
 import React from "react";
-const Star = ({ size = 48, color = "currentColor" }) => (
+const Star = ({ size = 48, color = "currentColor", filled = false }) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         width={size}
         height={size}
         viewBox="0 0 24 24"
-        fill="none"
+        fill={filled ? color : "none"}
         stroke={color}
         strokeWidth="1"
         strokeLinecap="round"

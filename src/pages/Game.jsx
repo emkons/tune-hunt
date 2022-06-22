@@ -78,7 +78,7 @@ const Game = ({volume}) => {
                 setLoading(false);
                 removeToken();
             });
-    }, [apiInstance, removeToken, playlistId]);
+    }, [apiInstance, playlistId]);
 
     useEffect(() => {
         // const availableSequence = tracks.map((t, i) => ({preview_url: t?.track.preview_url, index: i})).filter(t => t.preview_url !== null).map(t => t.index)
@@ -126,7 +126,7 @@ const Game = ({volume}) => {
     const gameScreen = () => (
         <>
             {tracks.length > 0 ? (
-                <div className="flex flex-col flex-grow justify-between">
+                <div className="flex flex-col flex-grow justify-between items-center">
                     <PlaylistInfo
                         id={playlistId}
                         name={playlistName}
@@ -153,7 +153,7 @@ const Game = ({volume}) => {
     const loadingScreen = () => <div>Loading...</div>;
 
     const endScreen = () => (
-        <div className="flex flex-col flex-grow justify-between">
+        <div className="flex flex-col flex-grow justify-between items-center">
             <PlaylistInfo
                 id={playlistId}
                 name={playlistName}

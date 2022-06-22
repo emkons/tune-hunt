@@ -36,10 +36,10 @@ const PlaylistInfo = ({
     };
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center max-w-md">
             <div>{preText}</div>
-            <div className="rounded-lg shadow-lg bg-gray-600 w-2/3 flex flex-row flex-wrap p-3 antialiased">
-                <div className="md:w-1/3 w-full">
+            <div className="rounded-lg shadow-lg bg-gray-600 w-full grid grid-cols-3 p-3 antialiased">
+                <div className="w-full">
                     {external ? (
                         <a href={link} target="_blank" rel="noreferrer">
                             <img
@@ -58,7 +58,7 @@ const PlaylistInfo = ({
                         </Link>
                     )}
                 </div>
-                <div className="md:w-2/3 w-full px-3 flex flex-col justify-between flex-wrap">
+                <div className="px-3 col-span-2 flex flex-col flex-grow justify-between flex-wrap">
                     <div className="w-full text-left text-gray-700 font-semibold relative pt-3 md:pt-0">
                         <div className="text-2xl text-white leading-tight">
                             {name}
@@ -76,7 +76,7 @@ const PlaylistInfo = ({
                                 className="cursor-pointer"
                                 onClick={() => toggleFavourite()}
                             >
-                                <Star color={favourite ? "yellow" : "black"} />
+                                <Star size={32} color={favourite ? "yellow" : "black"} filled={favourite} />
                             </div>
                         </div>
                     ) : null}

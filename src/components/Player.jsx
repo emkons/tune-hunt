@@ -54,7 +54,7 @@ const Player = ({ url, round, finished, volume }) => {
   };
 
   return (
-    <div className="flex flex-row items-center gap-4">
+    <div className="flex flex-row items-center gap-4 w-full">
       <div className="w-full bg-gray-400 rounded-full h-2.5 flex-grow relative overflow-hidden">
         <div
           className="bg-gray-200 h-2.5 absolute top-0 left-0 right-0 bottom-0"

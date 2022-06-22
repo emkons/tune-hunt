@@ -44,16 +44,18 @@ const PlaylistSelect = () => {
                     </form>
                     <p className="max-w-screen-sm text-lg text-gray-600 sm:text-2xl">or</p>
                     <p className="max-w-screen-sm text-lg text-gray-600 sm:text-2xl">Choose one from the list below</p>
-                    {(favourites || []).map(fav => (
-                        <PlaylistInfo
-                            key={fav.id}
-                            id={fav.id}
-                            name={fav.name}
-                            author={fav.author}
-                            thumbnail={fav.thumbnail}
-                            link={`/playlist/${fav.id}`}
-                        />
-                    ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {(favourites || []).map(fav => (
+                            <PlaylistInfo
+                                key={fav.id}
+                                id={fav.id}
+                                name={fav.name}
+                                author={fav.author}
+                                thumbnail={fav.thumbnail}
+                                link={`/playlist/${fav.id}`}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         </Content>
