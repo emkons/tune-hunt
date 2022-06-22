@@ -173,7 +173,7 @@ const Game = ({volume}) => {
             <PlaylistInfo
                 id={todayTrack?.track?.id}
                 name={todayTrack?.track?.name}
-                author={todayTrack?.track?.artists?.[0]?.name}
+                author={todayTrack?.track?.artists.map(a => a?.name).join(', ')}
                 thumbnail={todayTrack?.track?.album?.images?.[0]?.url}
                 link={todayTrack?.track?.external_urls?.spotify}
                 correct={correct}

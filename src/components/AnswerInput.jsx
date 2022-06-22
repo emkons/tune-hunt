@@ -7,7 +7,7 @@ const AnswerInput = ({ tracks = [], onSubmit }) => {
   const options = useMemo(() => {
     return tracks.map((t) => ({
       value: t?.track?.id,
-      label: `${t?.track?.name} - ${t?.track?.artists?.[0].name}`,
+      label: `${t?.track?.name} - ${t?.track?.artists.map(a => a?.name).join(', ')}`,
     }));
   }, [tracks]);
 
