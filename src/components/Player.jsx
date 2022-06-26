@@ -26,6 +26,12 @@ const Player = ({ url, round, finished, volume }) => {
   }, [url]);
 
   useEffect(() => {
+    return () => {
+      audioRef.current?.pause()
+    }
+  }, [])
+
+  useEffect(() => {
     // TODO: Add audio control
     audioRef.current.volume = volume / 100;
     if (isPlaying) {
@@ -56,14 +62,14 @@ const Player = ({ url, round, finished, volume }) => {
 
   return (
     <div className="flex flex-row items-center gap-4 w-full">
-      <div>{formatTime(currentTime)}</div>
+      <div className="dark:text-gray-300">{formatTime(currentTime)}</div>
       <div className="w-full bg-gray-400 rounded-full h-2.5 flex-grow relative overflow-hidden">
         <div
           className="bg-gray-200 h-2.5 absolute top-0 left-0 right-0 bottom-0"
           style={{ width: `${finished ? 30000 : (roundParts[round] / 16) / 10}%` }}
         ></div>
         <div
-          className="bg-blue-600 h-2.5 rounded-full absolute top-0 left-0 right-0 bottom-0"
+          className="bg-blue-600 h-2.5 absolute top-0 left-0 right-0 bottom-0"
           style={{ width: `${(currentTime / (finished ? 30 : 16)) * 100}%` }}
         ></div>
         <div className="markers divide-x flex absolute top-0 left-0 right-0 bottom-0 items-center">
@@ -77,7 +83,7 @@ const Player = ({ url, round, finished, volume }) => {
       </div>
       <button
         onClick={() => setIsPlaying(!isPlaying)}
-        className="p-0 bg-green-800 text-white shadow rounded-full"
+        className="p-0 bg-green-800 text-white dark:text-gray-300 shadow rounded-full"
       >
         {isPlaying ? (
           <PauseCircle />

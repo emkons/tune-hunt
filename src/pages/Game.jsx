@@ -150,7 +150,7 @@ const Game = ({volume}) => {
         </>
     );
 
-    const loadingScreen = () => <div>Loading...</div>;
+    const loadingScreen = () => <div className="dark:text-gray-300">Loading...</div>;
 
     const endScreen = () => (
         <div className="flex flex-col flex-grow justify-between items-center">

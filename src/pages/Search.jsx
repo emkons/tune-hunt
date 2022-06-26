@@ -47,18 +47,18 @@ const Search = () => {
         <Content>
             <div className="container mx-auto px-4 py-14 sm:px-6 xl:px-12">
                 <div className="flex flex-col items-center justify-center space-y-6 text-center">
-                    <h1 className="text-4xl font-bold tracking-normal sm:text-5xl lg:text-6xl">
+                    <h1 className="text-4xl font-bold tracking-normal dark:text-gray-300 sm:text-5xl lg:text-6xl">
                         Search Playlist
                     </h1>
                     <input
                         type="text"
-                        className="w-full rounded-md border bg-gray-50 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="w-full rounded-md border bg-gray-50 dark:bg-gray-500 dark:text-gray-50 dark:border-gray-400 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                         placeholder="Search..."
                         value={searchQuery}
                         onChange={onTextChange}
                     />
                     {loading ? (
-                        <div>Loading...</div>
+                        <div className="dark:text-gray-300">Loading...</div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                             {(playlists || []).map((playlist) => (

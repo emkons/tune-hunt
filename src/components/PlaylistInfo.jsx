@@ -37,7 +37,7 @@ const PlaylistInfo = ({
 
     return (
         <div className="grid justify-items-center max-w-md">
-            { preText ? <div>{preText}</div> : null }
+            { preText ? <div className="dark:text-gray-300">{preText}</div> : null }
             <div className="rounded-lg shadow-lg bg-gray-600 w-full grid grid-cols-3 p-3 antialiased">
                 <div className="w-full">
                     {external ? (
