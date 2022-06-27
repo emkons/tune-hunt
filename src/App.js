@@ -29,7 +29,7 @@ function App() {
 
   return (
     <div className={darkMode ? 'dark' : ''}>
-      <div className="h-screen flex flex-col dark:bg-gray-700">
+      <div className="min-h-screen flex flex-col dark:bg-gray-700">
         <BrowserRouter>
           <SpotifyProvider>
             <FavouritesProvider>
