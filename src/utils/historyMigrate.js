@@ -14,14 +14,16 @@ export const migrate = () => {
 
         const playlistId = key.substring(8)
         const value = JSON.parse(localStorage.getItem(key))
-        Object.keys(value).forEach(date => {
-            const dayData = value[date]
-            db.playlistHistory.put({
-                id: playlistId,
-                date: date,
-                ...dayData
+        if (value) {
+            Object.keys(value).forEach(date => {
+                const dayData = value[date]
+                db.playlistHistory.put({
+                    id: playlistId,
+                    date: date,
+                    ...dayData
+                })
             })
-        })
+        }
         localStorage.removeItem(key)
     })
     localStorage.setItem('migrated', true)
