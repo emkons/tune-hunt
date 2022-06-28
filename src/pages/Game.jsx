@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import AnswerInput from "../components/AnswerInput";
 import Content from "../components/Content";
 import Guesses from "../components/Guesses";
+import History from "../components/History";
 import Player from "../components/Player";
 import PlaylistInfo from "../components/PlaylistInfo";
 import { useSpotify } from "../context/SpotifyContext";
@@ -12,7 +13,7 @@ import { getSequence } from "../utils/sequence";
 
 const startDate = moment([2022, 5, 13]);
 
-const Game = ({volume}) => {
+const Game = ({ volume }) => {
     const { playlistId } = useParams();
     const { apiInstance, removeToken } = useSpotify();
     const [tracks, setTracks] = useState([]);
@@ -23,6 +24,8 @@ const Game = ({volume}) => {
     const [todayIndex, setTodayIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const date = moment().format("YYYY-MM-DD");
+
+    const [historyOpen, setHistoryOpen] = useState(false);
 
     const {
         todayTrack,
@@ -119,7 +122,9 @@ const Game = ({volume}) => {
                 external={true}
                 preText="Currently playing"
             />
-            <div className="text-center">Sorry, no songs available from this playlist</div>
+            <div className="text-center">
+                Sorry, no songs available from this playlist
+            </div>
         </div>
     );
 
@@ -139,10 +144,18 @@ const Game = ({volume}) => {
                     <Guesses guesses={guesses} correctTrack={todayTrack} />
                     <Player
                         volume={volume}
-                        url={todayTrack?.track.preview_url}
+                        url={todayTrack?.track?.preview_url}
                         round={guesses.length}
                     />
-                    <AnswerInput tracks={tracks.filter(t => !guesses.some(g => g?.track?.id === t?.track?.id))} onSubmit={handleGuess} />
+                    <AnswerInput
+                        tracks={tracks.filter(
+                            (t) =>
+                                !guesses.some(
+                                    (g) => g?.track?.id === t?.track?.id
+                                )
+                        )}
+                        onSubmit={handleGuess}
+                    />
                 </div>
             ) : (
                 emptyGameScreen
@@ -150,7 +163,9 @@ const Game = ({volume}) => {
         </>
     );
 
-    const loadingScreen = () => <div className="dark:text-gray-300">Loading...</div>;
+    const loadingScreen = () => (
+        <div className="dark:text-gray-300">Loading...</div>
+    );
 
     const endScreen = () => (
         <div className="flex flex-col flex-grow justify-between items-center">
@@ -173,7 +188,9 @@ const Game = ({volume}) => {
             <PlaylistInfo
                 id={todayTrack?.track?.id}
                 name={todayTrack?.track?.name}
-                author={todayTrack?.track?.artists.map(a => a?.name).join(', ')}
+                author={todayTrack?.track?.artists
+                    .map((a) => a?.name)
+                    .join(", ")}
                 thumbnail={todayTrack?.track?.album?.images?.[0]?.url}
                 link={todayTrack?.track?.external_urls?.spotify}
                 correct={correct}
@@ -187,7 +204,29 @@ const Game = ({volume}) => {
 
     return (
         <Content>
+            <div className="text-gray-200">
+                <svg
+                    onClick={() => setHistoryOpen(true)}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <path d="M12 20v-6M6 20V10M18 20V4" />
+                </svg>
+            </div>
             {loading ? loadingScreen() : finished ? endScreen() : gameScreen()}
+            {historyOpen ? (
+                <History
+                    playlistId={playlistId}
+                    onClose={() => setHistoryOpen(false)}
+                />
+            ) : null}
         </Content>
     );
 };

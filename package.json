@@ -7,6 +7,8 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "autoprefixer": "^10.4.7",
+    "dexie": "^3.2.2",
+    "dexie-react-hooks": "^1.1.1",
     "js-cookie": "^3.0.1",
     "moment": "^2.29.3",
     "postcss": "^8.4.14",

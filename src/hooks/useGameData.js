@@ -1,4 +1,6 @@
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useState, useEffect } from 'react'
+import { db } from '../db';
 import useLocalStorage from './useLocalStorage';
 
 const useGameData = (playlistId, date) => {
@@ -7,27 +9,22 @@ const useGameData = (playlistId, date) => {
     const [correct, setCorrect] = useState(false);
     const [finished, setFinished] = useState(false);
 
-    const [playlistData, setPlaylistData] = useLocalStorage(`history-${playlistId}`, {})
+    const playlistData = useLiveQuery(() => db.playlistHistory.get({id: playlistId, date: date}), [playlistId, date])
 
     useEffect(() => {
-        if (playlistId === undefined || date === undefined || playlistData === null || Object.keys(playlistData).length === 0) {
-            return
-        }
-
-        if (playlistData?.[date] === undefined) {
+        if (playlistData === undefined) {
             setTodayTrack(null)
             setGuesses([])
             setCorrect(false)
             setFinished(false)
         } else {
-            const data = playlistData?.[date]
-            if (data?.guesses.length === guesses.length && data?.correct === correct && data?.finished === finished) {
+            if (playlistData?.guesses.length === guesses.length && playlistData?.correct === correct && playlistData?.finished === finished) {
                 return
             }
-            setTodayTrack(data?.track)
-            setGuesses(data?.guesses)
-            setCorrect(data?.correct)
-            setFinished(data?.finished)
+            setTodayTrack(playlistData?.track)
+            setGuesses(playlistData?.guesses)
+            setCorrect(playlistData?.correct)
+            setFinished(playlistData?.finished)
         }
         // eslint-disable-next-line
     }, [playlistData]);
@@ -37,15 +34,15 @@ const useGameData = (playlistId, date) => {
             return
         }
 
-        setPlaylistData({
-            ...playlistData,
-            [date]: {
-                track: todayTrack,
-                guesses,
-                correct,
-                finished
-            }
+        db.playlistHistory.put({
+            id: playlistId,
+            date: date,
+            track: todayTrack,
+            guesses,
+            correct,
+            finished
         })
+
         // eslint-disable-next-line
     }, [todayTrack, guesses, correct, finished])
 
