@@ -18,7 +18,6 @@ const Player = ({ url, round, finished, volume }) => {
 
   const audioRef = useRef();
 
-  const timerRef = useRef(null);
   const animationRef = useRef(null);
 
   useEffect(() => {
@@ -36,16 +35,12 @@ const Player = ({ url, round, finished, volume }) => {
     audioRef.current.volume = volume / 100;
     if (isPlaying) {
       audioRef.current.play();
-      timerRef.current = setTimeout(
-        () => setIsPlaying(false),
-        finished ? 30000 : roundParts[round]
-      );
+      cancelAnimationFrame(animationRef.current);
       animationRef.current = requestAnimationFrame(whilePlaying);
     } else {
       audioRef.current.currentTime = 0;
       setCurrentTime(0);
       audioRef.current.pause();
-      clearTimeout(timerRef.current);
       cancelAnimationFrame(animationRef.current);
     }
     // eslint-disable-next-line
@@ -57,6 +52,9 @@ const Player = ({ url, round, finished, volume }) => {
 
   const whilePlaying = () => {
     setCurrentTime(audioRef.current.currentTime);
+    if (audioRef.current.currentTime >= (finished ? 30000 : roundParts[round]) / 1000) {
+      setIsPlaying(false)
+    }
     animationRef.current = requestAnimationFrame(whilePlaying);
   };
 

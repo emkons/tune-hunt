@@ -18,7 +18,6 @@ const History = ({ playlistId, onClose }) => {
 
     const [distribution, setDistribution] = useState({});
     const [maxGuesses, setMaxGuesses] = useState(0);
-    const [unguessedCount, setUnguessedCount] = useState(0);
     const [currentDayIndex, setCurrentDayIndex] = useState(0);
 
     useEffect(() => {
@@ -29,16 +28,15 @@ const History = ({ playlistId, onClose }) => {
             4: 0,
             5: 0,
             6: 0,
+            'X': 0
         };
-        let unguessed = 0;
         historyData?.forEach((dayData) => {
             if (!dayData?.correct) {
-                unguessed++;
+                dist['X']++;
                 return;
             }
             dist[dayData?.guesses?.length]++;
         });
-        setUnguessedCount(unguessed);
         setDistribution(dist);
         setMaxGuesses(Math.max(...Object.values(dist)));
     }, [historyData]);
@@ -84,7 +82,7 @@ const History = ({ playlistId, onClose }) => {
                                     <div className="">{key}</div>
                                     <div className="flex-grow">
                                         <div
-                                            className="bg-green-600 rounded"
+                                            className={`rounded ${key === 'X' ? 'bg-gray-500' : 'bg-green-600'}`}
                                             style={{
                                                 width: `${
                                                     (val / (maxGuesses || 1)) *
@@ -97,10 +95,6 @@ const History = ({ playlistId, onClose }) => {
                                     </div>
                                 </div>
                             ))}
-                            <div className="text-normal text-gray-300 flex items-stretch gap-3">
-                                <div>X</div>
-                                <div className="px-2">{unguessedCount}</div>
-                            </div>
                         </div>
                     </div>
                     <div className="text-normal text-center text-gray-300">
