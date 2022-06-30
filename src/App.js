@@ -13,19 +13,11 @@ import { SpotifyProvider } from './context/SpotifyContext';
 import { FavouritesProvider } from './context/FavouritesContext';
 import useLocalStorage from './hooks/useLocalStorage';
 import Search from './pages/Search';
-import { useEffect } from 'react';
+import useSettings from './hooks/useSettings';
 
 function App() {
   const [volume, setVolume] = useLocalStorage('volume', 50)
-  const [darkMode, setDarkMode] = useLocalStorage('darkMode', undefined)
-
-  useEffect(() => {
-    console.log('setting darkMode')
-    if (['true', 'false'].includes(localStorage.darkMode)) {
-      return
-    }
-    setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
-  }, [darkMode])
+  const [darkMode] = useSettings('darkMode', () => window.matchMedia('(prefers-color-scheme: dark)').matches)
 
   return (
     <div className={darkMode ? 'dark' : ''}>
@@ -44,7 +36,7 @@ function App() {
                   </Route>
                 </Route>
               </Routes>
-              <Footer darkMode={darkMode} setDarkMode={setDarkMode}></Footer>
+              <Footer></Footer>
             </FavouritesProvider>
           </SpotifyProvider>
         </BrowserRouter>
