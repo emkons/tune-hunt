@@ -11,12 +11,11 @@ import PlaylistSelect from './pages/PlaylistSelect';
 import Game from './pages/Game';
 import { SpotifyProvider } from './context/SpotifyContext';
 import { FavouritesProvider } from './context/FavouritesContext';
-import useLocalStorage from './hooks/useLocalStorage';
 import Search from './pages/Search';
 import useSettings from './hooks/useSettings';
 
 function App() {
-  const [volume, setVolume] = useLocalStorage('volume', 50)
+  const [volume, setVolume] = useSettings('volume', 50)
   const [darkMode] = useSettings('darkMode', () => window.matchMedia('(prefers-color-scheme: dark)').matches)
 
   return (

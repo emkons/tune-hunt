@@ -21,7 +21,7 @@ const VolumeSlider = ({ value = 20, setValue }) => {
         <div className="w-16">
             <Range
                 step={1}
-                min={0}
+                min={1}
                 max={100}
                 values={values}
                 onChange={(v) => setValues(v)}

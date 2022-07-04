@@ -32,6 +32,7 @@ const Login = () => {
                         <SpotifyAuth
                             redirectUri={process.env.REACT_APP_SPOTIFY_REDIRECT_URL}
                             clientID={process.env.REACT_APP_SPOTIFY_CLIENT_ID}
+                            logoClassName="fill-green-500"
                             onAccessToken={handleAccess}
                         />
                     </div>
