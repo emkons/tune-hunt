@@ -1,11 +1,24 @@
 import { db } from "../db"
 
 export const migrate = () => {
-    const migrated = localStorage.getItem('migrated')
-    if (migrated) {
-        return
+    let migrated = localStorage.getItem('migrated')
+    if (migrated === 'true') {
+        migrated = '1'
     }
-    console.log("Migrating to indexed DB")
+    
+    if (migrated < '1') {
+        migrateV1()
+        localStorage.setItem('migrated', '1')
+    }
+    
+    if (migrated < '2') {
+        migrateV2()
+        localStorage.setItem('migrated', '2')
+    }
+}
+
+const migrateV1 = () => {
+    console.log("Migrating history to indexed DB")
     
     Object.keys(localStorage).forEach(key => {
         if (!key.startsWith('history-')) {
@@ -26,5 +39,15 @@ export const migrate = () => {
         }
         localStorage.removeItem(key)
     })
-    localStorage.setItem('migrated', true)
+}
+
+const migrateV2 = () => {
+    console.log("Migrating favourites to indexed DB")
+    
+    const favouritesRaw = localStorage.getItem('favourites')
+    const favourites = JSON.parse(favouritesRaw || [])
+    favourites.forEach(fav => {
+        db.favourites.put(fav)
+        localStorage.removeItem('favourites')
+    })
 }

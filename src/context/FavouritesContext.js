@@ -1,6 +1,7 @@
+import { useLiveQuery } from "dexie-react-hooks"
 import React, { createContext, useContext } from "react"
 import { useNavigate } from "react-router-dom"
-import useLocalStorage from "../hooks/useLocalStorage"
+import { db } from "../db"
 
 const FavouritesContext = createContext()
 
@@ -8,14 +9,14 @@ export const useFavourites = () => useContext(FavouritesContext)
 
 export const FavouritesProvider = ({children}) => {
     const navigate = useNavigate()
-    const [favourites, setFavourites] = useLocalStorage('favourites', [])
+    const favourites = useLiveQuery(() => db.favourites.toArray(), [])
 
     const addFavourite = (favourite) => {
-        setFavourites([...(favourites || []), favourite])
+        db.favourites.put(favourite)
     }
 
     const removeFavourite = (favourite) => {
-        setFavourites((favourites || []).filter(fav => fav?.id !== favourite?.id))
+        db.favourites.delete(favourite.id)
     }
 
     const value = {
