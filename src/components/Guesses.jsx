@@ -40,6 +40,12 @@ const Guesses = ({ guesses, correctTrack = false }) => {
                   <div className="flex-grow">
                       {`${guess?.track.name} - ${guess?.track?.artists.map(a => a?.name).join(', ')}`}
                   </div>
+                  <img
+                        className="rounded-md shadow-lg antialiased"
+                        style={{maxWidth: 24}}
+                        alt={guess?.track.name}
+                        src={guess?.track?.album?.images?.[0].url}
+                    />
                 </>
               }
             </div>
