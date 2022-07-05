@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import Select, { createFilter } from "react-select";
+import Select, { components, createFilter } from "react-select";
 import Check from "./icons/Check";
 
 const selectStyles = {
@@ -31,12 +31,27 @@ const selectStyles = {
   })
 }
 
+const Option = (props) => {
+  return (
+    <div className="flex flex-row items-center gap-1">
+      <img
+          className="rounded-md shadow-lg antialiased"
+          style={{maxWidth: 24}}
+          alt={props?.label}
+          src={props?.data?.thumb}
+      />
+      <components.Option {...props} />
+    </div>
+  );
+}
+
 const AnswerInput = ({ tracks = [], onSubmit }) => {
   const [selectedTrack, setSelectedTrack] = useState(null);
   const options = useMemo(() => {
     return tracks.map((t) => ({
       value: t?.track?.id,
       label: `${t?.track?.name} - ${t?.track?.artists.map(a => a?.name).join(', ')}`,
+      thumb: t?.track?.album?.images?.[0].url
     }));
   }, [tracks]);
 
@@ -68,6 +83,7 @@ const AnswerInput = ({ tracks = [], onSubmit }) => {
         className="flex-grow"
         menuPlacement="top"
         value={selectedTrack}
+        components={{ Option }}
         styles={selectStyles}
         filterOption={createFilter(filterConfig)}
         onChange={(value) => setSelectedTrack(value)}
