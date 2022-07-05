@@ -33,7 +33,7 @@ const selectStyles = {
 
 const Option = (props) => {
   return (
-    <div className="flex flex-row items-center gap-1">
+    <div className="flex flex-row items-center gap-1 px-2">
       <img
           className="rounded-md shadow-lg antialiased"
           style={{maxWidth: 24}}
