@@ -12,7 +12,7 @@ const Header = ({volume, setVolume}) => {
                     </Link>
                 </div>
                 <div className="flex flex-row gap-4 items-center">
-                    <Link to={'/search'} className="font-medium text-gray-900 dark:text-gray-300">Search</Link>
+                    {/* <Link to={'/search'} className="font-medium text-gray-900 dark:text-gray-300">Search</Link> */}
                     <VolumeSlider value={volume} setValue={setVolume} />
                 </div>
 

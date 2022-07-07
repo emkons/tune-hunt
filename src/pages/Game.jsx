@@ -205,7 +205,7 @@ const Game = ({ volume }) => {
     );
 
     const loadingScreen = () => (
-        <div className="dark:text-gray-300">Loading...</div>
+        <div className="dark:text-gray-300 text-center">Loading...</div>
     );
 
     const endScreen = () => (

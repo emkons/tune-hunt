@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Content from "../components/Content";
 import { parse } from "spotify-uri";
@@ -15,33 +15,94 @@ import { db } from "../db";
 import { arrayMoveImmutable } from "array-move";
 import { useEffect } from "react";
 import { useMemo } from "react";
+import { useSpotify } from "../context/SpotifyContext";
+import PlaylistInfo from "../components/PlaylistInfo";
 
 const PlaylistSelect = () => {
     const navigate = useNavigate();
-    const [link, setLink] = useState("");
+    // const [link, setLink] = useState("");
     const [error, setError] = useState("");
     const { favourites } = useFavourites();
-    const [ localFavourites, setLocalFavourites ] = useState([])
+    const [localFavourites, setLocalFavourites] = useState([]);
     const sensors = useSensors(useSensor(PointerSensor));
-    
+
+    // Search things
+    const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [isLink, setIsLink] = useState(false);
+    const [isPlaylistLink, setIsPlaylistLink] = useState(false);
+    const [searching, setSearching] = useState(false);
+    const [playlists, setPlaylists] = useState([]);
+    const { apiInstance, removeToken } = useSpotify();
+    const requestRateLimitRef = useRef(null);
+
     useEffect(() => {
-        setLocalFavourites([])
+        setLocalFavourites([]);
         // eslint-disable-next-line
-    }, [favourites])
+    }, [favourites]);
 
     const visibleFavourites = useMemo(() => {
         // Hack to avoid flickering while fetching updated favourites
-        return localFavourites.length > 0 ? localFavourites : favourites
-    }, [favourites, localFavourites])
+        return localFavourites.length > 0 ? localFavourites : favourites;
+    }, [favourites, localFavourites]);
 
     const onTextChange = (event) => {
-        setLink(event.target.value);
         setError("");
+        const query = event.target.value;
+        setSearchQuery(query);
+        setIsLink(false);
+        setIsPlaylistLink(false)
+
+        try {
+            const parsed = parse(query);
+            if (!parsed?.type) {
+                return;
+            }
+            setIsLink(true);
+            if (parsed?.type !== "playlist") {
+                setError("Only playlist links supported");
+                return;
+            }
+            setIsPlaylistLink(true)
+        } catch (e) {
+            if (e.name !== "TypeError") {
+                console.error(e);
+            }
+        }
     };
+
+    useEffect(() => {
+        clearTimeout(requestRateLimitRef.current);
+        if (!searchQuery || !apiInstance) {
+            setSearching(false);
+            return;
+        }
+
+        if (isLink) {
+            return;
+        }
+        requestRateLimitRef.current = setTimeout(() => {
+            setLoading(true);
+            setSearching(true);
+            apiInstance
+                ?.searchPlaylists(searchQuery, {
+                    market: process.env.REACT_APP_SPOTIFY_MARKET,
+                    limit: 6,
+                })
+                .then(async (data) => {
+                    setPlaylists(data?.playlists?.items);
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    setLoading(false);
+                });
+        }, 1000);
+    }, [apiInstance, searchQuery, isLink]);
 
     const goToPlaylist = (e) => {
         e.preventDefault();
-        const parsed = parse(link);
+        const parsed = parse(searchQuery);
         if (!parsed?.type) {
             setError("Invalid URL");
             return;
@@ -67,15 +128,48 @@ const PlaylistSelect = () => {
                 originalIndex,
                 overIndex
             ).map((fav, index) => ({ ...fav, position: index }));
-            setLocalFavourites(reorderedList)
+            setLocalFavourites(reorderedList);
             db.favourites.bulkPut(reorderedList);
         }
     };
 
-    const shuffle = () => {
-        const shuffledList = [{...favourites[1], position: 0}, {...favourites[2], position: 1}, {...favourites[0], position: 2}]
-        db.favourites.bulkPut(shuffledList)
-    }
+    const FavouritesList = (
+        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+            <SortableContext items={visibleFavourites || []}>
+                {(visibleFavourites || []).map((fav) => (
+                    <PlaylistInfoSortable
+                        key={fav.id}
+                        id={fav.id}
+                        name={fav.name}
+                        author={fav.author}
+                        thumbnail={fav.thumbnail}
+                        link={`/playlist/${fav.id}`}
+                    />
+                ))}
+            </SortableContext>
+        </DndContext>
+    );
+
+    const SearchResults = (
+        <>
+            {loading ? (
+                <div className="dark:text-gray-300">Loading...</div>
+            ) : (
+                <>
+                    {(playlists || []).map((playlist) => (
+                        <PlaylistInfo
+                            key={playlist?.id}
+                            id={playlist?.id}
+                            name={playlist?.name}
+                            author={playlist?.owner?.display_name}
+                            thumbnail={playlist?.images?.[0]?.url}
+                            link={`/playlist/${playlist?.id}`}
+                        />
+                    ))}
+                </>
+            )}
+        </>
+    );
 
     return (
         <Content>
@@ -85,7 +179,7 @@ const PlaylistSelect = () => {
                         Select Playlist
                     </h1>
                     <p className="max-w-screen-sm text-lg text-gray-600 dark:text-gray-300 sm:text-2xl">
-                        Paste url of a spotify playlist below to get started
+                        Paste spotify playlist URL or search for playlist below
                     </p>
                     <form
                         onSubmit={(e) => goToPlaylist(e)}
@@ -94,39 +188,31 @@ const PlaylistSelect = () => {
                         <input
                             type="text"
                             className="w-full rounded-md border bg-gray-50 dark:bg-gray-500 dark:text-gray-50 dark:border-gray-400 dark:placeholder-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
-                            placeholder="Spotify URL"
-                            value={link}
+                            placeholder="Spotify URL or playlist name"
+                            value={searchQuery}
                             onChange={onTextChange}
                         />
-                        <div>{error}</div>
                         <button
                             type="submit"
+                            style={{ display: isPlaylistLink ? "block" : "none" }}
                             className="w-full rounded-md border border-blue-500 bg-blue-500 py-2 px-6 text-white transition hover:border-blue-600 hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-blue-500 disabled:hover:bg-blue-500 sm:max-w-max"
                         >
                             Go
                         </button>
                     </form>
-                    <p className="max-w-screen-sm text-lg text-gray-600 dark:text-gray-300 sm:text-2xl">
-                        or
-                    </p>
-                    <p onClick={() => shuffle()} className="max-w-screen-sm text-lg text-gray-600 dark:text-gray-300 sm:text-2xl">
-                        Choose one from the list below
-                    </p>
+                    <div className="text-red-600 dark:text-red-300">{error}</div>
+                    {searching ? null : (
+                        <>
+                            <p className="max-w-screen-sm text-lg text-gray-600 dark:text-gray-300 sm:text-2xl">
+                                or
+                            </p>
+                            <p className="max-w-screen-sm text-lg text-gray-600 dark:text-gray-300 sm:text-2xl">
+                                Choose one of your favourites
+                            </p>
+                        </>
+                    )}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-                        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-                            <SortableContext items={visibleFavourites || []}>
-                                {(visibleFavourites || []).map((fav) => (
-                                    <PlaylistInfoSortable
-                                        key={fav.id}
-                                        id={fav.id}
-                                        name={fav.name}
-                                        author={fav.author}
-                                        thumbnail={fav.thumbnail}
-                                        link={`/playlist/${fav.id}`}
-                                    />
-                                ))}
-                            </SortableContext>
-                        </DndContext>
+                        {searching ? SearchResults : FavouritesList}
                     </div>
                 </div>
             </div>

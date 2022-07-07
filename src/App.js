@@ -28,7 +28,7 @@ function App() {
               <Routes>
                 <Route path='/'>
                   <Route index element={<Login />} />
-                  <Route path='search' element={<Search />} />
+                  {/* <Route path='search' element={<Search />} /> */}
                   <Route path="playlist">
                     <Route index element={<PlaylistSelect />} />
                     <Route path=":playlistId" element={<Game volume={volume} />} />
