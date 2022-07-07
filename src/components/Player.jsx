@@ -23,13 +23,10 @@ const Player = ({ url, round, finished, volume }) => {
 
   useEffect(() => {
     audioRef.current = new Audio(url);
-  }, [url]);
-
-  useEffect(() => {
     return () => {
       audioRef.current?.pause()
     }
-  }, [])
+  }, [url]);
 
   useEffect(() => {
     // TODO: Add audio control

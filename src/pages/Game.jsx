@@ -1,12 +1,16 @@
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import AnswerInput from "../components/AnswerInput";
 import Content from "../components/Content";
 import Guesses from "../components/Guesses";
 import History from "../components/History";
+import ArrowLeft from "../components/icons/ArrowLeft";
+import ArrowRight from "../components/icons/ArrowRight";
 import Player from "../components/Player";
 import PlaylistInfo from "../components/PlaylistInfo";
+import { useFavourites } from "../context/FavouritesContext";
 import { useSpotify } from "../context/SpotifyContext";
 import useGameData from "../hooks/useGameData";
 import { getSequence } from "../utils/sequence";
@@ -14,6 +18,7 @@ import { getSequence } from "../utils/sequence";
 const startDate = moment([2022, 5, 13]);
 
 const Game = ({ volume }) => {
+    const navigate = useNavigate()
     const { playlistId } = useParams();
     const { apiInstance, removeToken } = useSpotify();
     const [tracks, setTracks] = useState([]);
@@ -26,6 +31,30 @@ const Game = ({ volume }) => {
     const date = moment().format("YYYY-MM-DD");
 
     const [historyOpen, setHistoryOpen] = useState(false);
+
+    const {favourites} = useFavourites();
+    const currentFavouriteIndex = useMemo(
+        () => favourites?.findIndex((fav) => fav.id === playlistId),
+        [favourites, playlistId]
+    );
+    const prevFavourite = useMemo(
+        () =>
+            currentFavouriteIndex !== undefined &&
+            currentFavouriteIndex !== -1 &&
+            currentFavouriteIndex > 0
+                ? favourites[currentFavouriteIndex - 1]
+                : null,
+        [currentFavouriteIndex, favourites]
+    );
+    const nextFavourite = useMemo(
+        () =>
+            currentFavouriteIndex !== undefined &&
+            currentFavouriteIndex !== -1 &&
+            currentFavouriteIndex < favourites?.length - 1
+                ? favourites[currentFavouriteIndex + 1]
+                : null,
+        [currentFavouriteIndex, favourites]
+    );
 
     const {
         todayTrack,
@@ -110,6 +139,12 @@ const Game = ({ volume }) => {
             setFinished(true);
         }
     };
+
+    const handleNavigateToPlaylist = (playlist) => {
+        if (playlist !== null) {
+            navigate(`/playlist/${playlist?.id}`)
+        }
+    }
 
     const emptyGameScreen = (
         <div className="flex flex-col flex-grow gap-4">
@@ -203,31 +238,61 @@ const Game = ({ volume }) => {
     );
 
     return (
-        <Content>
-            <div className="text-gray-200">
-                <svg
-                    onClick={() => setHistoryOpen(true)}
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+        <div className="flex-grow flex justify-center">
+            <div className="flex items-center">
+                <div
+                    className={
+                        finished && prevFavourite
+                            ? "text-indigo-500 cursor-pointer"
+                            : "text-transparent"
+                    }
+                    onClick={() => handleNavigateToPlaylist(prevFavourite)}
                 >
-                    <path d="M12 20v-6M6 20V10M18 20V4" />
-                </svg>
+                    <ArrowLeft size={96} />
+                </div>
             </div>
-            {loading ? loadingScreen() : finished ? endScreen() : gameScreen()}
-            {historyOpen ? (
-                <History
-                    playlistId={playlistId}
-                    onClose={() => setHistoryOpen(false)}
-                />
-            ) : null}
-        </Content>
+            <Content className="grow-0 mx-0">
+                <div className="text-gray-200">
+                    <svg
+                        onClick={() => setHistoryOpen(true)}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <path d="M12 20v-6M6 20V10M18 20V4" />
+                    </svg>
+                </div>
+                {loading
+                    ? loadingScreen()
+                    : finished
+                    ? endScreen()
+                    : gameScreen()}
+                {historyOpen ? (
+                    <History
+                        playlistId={playlistId}
+                        onClose={() => setHistoryOpen(false)}
+                    />
+                ) : null}
+            </Content>
+            <div className="flex items-center">
+                <div
+                    className={
+                        finished && nextFavourite
+                            ? "text-indigo-500 cursor-pointer"
+                            : "text-transparent"
+                    }
+                    onClick={() => handleNavigateToPlaylist(nextFavourite)}
+                >
+                    <ArrowRight size={96} />
+                </div>
+            </div>
+        </div>
     );
 };
 

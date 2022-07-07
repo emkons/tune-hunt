@@ -2,6 +2,8 @@ import { useLiveQuery } from "dexie-react-hooks";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { db } from "../db";
+import ArrowLeft from "./icons/ArrowLeft";
+import ArrowRight from "./icons/ArrowRight";
 import Check from "./icons/Check";
 import X from "./icons/X";
 
@@ -78,7 +80,7 @@ const History = ({ playlistId, onClose }) => {
                     <div className="bg-gray-800/20 p-2 rounded">
                         <div className="flex flex-col gap-3">
                             {Object.entries(distribution).map(([key, val]) => (
-                                <div className="text-normal text-gray-300 flex items-stretch gap-3">
+                                <div key={key} className="text-normal text-gray-300 flex items-stretch gap-3">
                                     <div className="">{key}</div>
                                     <div className="flex-grow">
                                         <div
@@ -103,19 +105,7 @@ const History = ({ playlistId, onClose }) => {
                 </div>
                 <div className="flex flex-row items-center gap-3 mt-4">
                     <div onClick={() => handleDayChange(false)} className={currentDayIndex < historyData?.length - 1 ? 'text-gray-200 cursor-pointer' : 'text-gray-500'}>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="48"
-                            height="48"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M15 18l-6-6 6-6" />
-                        </svg>
+                        <ArrowLeft />
                     </div>
                     <div className="overflow-x-hidden flex-grow">
                         <div
@@ -149,19 +139,7 @@ const History = ({ playlistId, onClose }) => {
                         </div>
                     </div>
                     <div onClick={() => handleDayChange(true)} className={currentDayIndex > 0 ? 'text-gray-200 cursor-pointer' : 'text-gray-500'}>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="48"
-                            height="48"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M9 18l6-6-6-6" />
-                        </svg>
+                        <ArrowRight />
                     </div>
                 </div>
             </div>
