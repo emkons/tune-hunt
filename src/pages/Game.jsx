@@ -65,9 +65,14 @@ const Game = ({ volume }) => {
         setCorrect,
         finished,
         setFinished,
+        historyLoading
     } = useGameData(playlistId, date);
 
     useEffect(() => {
+        if (historyLoading) {
+            console.log('History loading...')
+            return
+        }
         setLoading(true);
         apiInstance
             ?.getPlaylist(playlistId, {
@@ -111,7 +116,7 @@ const Game = ({ volume }) => {
                 setLoading(false);
                 removeToken();
             });
-    }, [apiInstance, playlistId]);
+    }, [apiInstance, playlistId, historyLoading]);
 
     useEffect(() => {
         // const availableSequence = tracks.map((t, i) => ({preview_url: t?.track.preview_url, index: i})).filter(t => t.preview_url !== null).map(t => t.index)
@@ -130,14 +135,14 @@ const Game = ({ volume }) => {
         // eslint-disable-next-line
     }, [todayIndex, tracks]);
 
-    const handleGuess = (track) => {
-        setGuesses([...guesses, track]);
+    const handleGuess = async (track) => {
+        await setGuesses([...guesses, track]);
         if (track?.track?.id === todayTrack?.track?.id) {
-            setCorrect(true);
-            setFinished(true);
+            await setCorrect(true);
+            await setFinished(true);
         }
         if (guesses.length === 5) {
-            setFinished(true);
+            await setFinished(true);
         }
     };
 
@@ -229,7 +234,6 @@ const Game = ({ volume }) => {
                     .join(", ")}
                 thumbnail={todayTrack?.track?.album?.images?.[0]?.url}
                 link={todayTrack?.track?.external_urls?.spotify}
-                correct={correct}
                 external={true}
                 isPlaylist={false}
                 preText="Correct Song"
