@@ -5,7 +5,6 @@ const useSettings = (key, defaultValue) => {
 
     const value = useLiveQuery(async () => {
         const val = await db.settings.get(key)
-        console.log(val)
         if (val === undefined) {
             return typeof defaultValue === 'function' ? defaultValue() : defaultValue
         } else {

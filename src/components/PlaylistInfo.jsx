@@ -43,7 +43,7 @@ const PlaylistInfo = ({
                     {external ? (
                         <a href={link} target="_blank" rel="noreferrer">
                             <img
-                                className="rounded-lg shadow-lg antialiased"
+                                className="w-full aspect-square object-cover rounded-lg shadow-lg antialiased"
                                 alt={name}
                                 src={thumbnail}
                             />
@@ -51,7 +51,7 @@ const PlaylistInfo = ({
                     ) : (
                         <Link to={link}>
                             <img
-                                className="rounded-lg shadow-lg antialiased"
+                                className="w-full aspect-square object-cover rounded-lg shadow-lg antialiased"
                                 alt={name}
                                 src={thumbnail}
                             />
