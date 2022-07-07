@@ -15,6 +15,11 @@ export const migrate = () => {
         migrateV2()
         localStorage.setItem('migrated', '2')
     }
+
+    if (migrated < '3') {
+        migrateV3()
+        localStorage.setItem('migrated', '3')
+    }
 }
 
 const migrateV1 = () => {
@@ -50,4 +55,12 @@ const migrateV2 = () => {
         db.favourites.put(fav)
         localStorage.removeItem('favourites')
     })
+}
+
+const migrateV3 = async () => {
+    console.log("Migrating favourites order in indexed DB")
+
+    const favourites = await db.favourites.toArray()
+    const orderedList = favourites.map((fav, index) => ({position: index, ...fav}))
+    db.favourites.bulkPut(orderedList)
 }

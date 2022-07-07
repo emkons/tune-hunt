@@ -13,6 +13,8 @@ const PlaylistInfo = ({
     songCount,
     external = false,
     isPlaylist = true,
+    setRef,
+    ...props
 }) => {
     const { favourites, addFavourite, removeFavourite } = useFavourites();
 
@@ -36,7 +38,7 @@ const PlaylistInfo = ({
     };
 
     return (
-        <div className="grid justify-items-center max-w-md">
+        <div ref={setRef} className="grid justify-items-center max-w-md" {...props}>
             { preText ? <div className="dark:text-gray-300">{preText}</div> : null }
             <div className="rounded-lg shadow-lg bg-gray-600 w-full grid grid-cols-3 p-3 antialiased">
                 <div className="w-full">

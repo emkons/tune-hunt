@@ -18,9 +18,9 @@ const useGameData = (playlistId, date) => {
             setCorrect(false)
             setFinished(false)
         } else {
-            if (playlistData?.guesses.length === guesses.length && playlistData?.correct === correct && playlistData?.finished === finished) {
-                return
-            }
+            // if (playlistData?.guesses.length === guesses.length && playlistData?.correct === correct && playlistData?.finished === finished) {
+            //     return
+            // }
             setTodayTrack(playlistData?.track)
             setGuesses(playlistData?.guesses)
             setCorrect(playlistData?.correct)

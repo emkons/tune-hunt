@@ -68,6 +68,7 @@ const Game = ({ volume }) => {
     } = useGameData(playlistId, date);
 
     useEffect(() => {
+        setLoading(true);
         apiInstance
             ?.getPlaylist(playlistId, {
                 market: process.env.REACT_APP_SPOTIFY_MARKET,
