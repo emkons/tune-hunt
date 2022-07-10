@@ -19,7 +19,7 @@ const History = ({ playlistId, onClose }) => {
         [playlistId]
     );
 
-    const historyData = useMemo(() => historyDataQuery?.map(entry => ({...entry, track: entry.track || entry.todayTrack})))
+    const historyData = useMemo(() => historyDataQuery?.map(entry => ({...entry, track: entry.track || entry.todayTrack})), [historyDataQuery])
 
     const [distribution, setDistribution] = useState({});
     const [maxGuesses, setMaxGuesses] = useState(0);
