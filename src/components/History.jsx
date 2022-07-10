@@ -1,5 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { useState } from "react";
+import { useMemo } from "react";
 import { useEffect } from "react";
 import { db } from "../db";
 import ArrowLeft from "./icons/ArrowLeft";
@@ -8,7 +9,7 @@ import Check from "./icons/Check";
 import X from "./icons/X";
 
 const History = ({ playlistId, onClose }) => {
-    const historyData = useLiveQuery(
+    const historyDataQuery = useLiveQuery(
         () =>
             db.playlistHistory
                 .where({ id: playlistId })
@@ -17,6 +18,8 @@ const History = ({ playlistId, onClose }) => {
                 .toArray(),
         [playlistId]
     );
+
+    const historyData = useMemo(() => historyDataQuery?.map(entry => ({...entry, track: entry.track || entry.todayTrack})))
 
     const [distribution, setDistribution] = useState({});
     const [maxGuesses, setMaxGuesses] = useState(0);
