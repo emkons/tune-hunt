@@ -14,6 +14,7 @@ const roundParts = {
 
 const Player = ({ url, round, finished, volume }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasEnded, setHasEnded] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
 
   const audioRef = useRef();
@@ -32,6 +33,7 @@ const Player = ({ url, round, finished, volume }) => {
     // TODO: Add audio control
     audioRef.current.volume = volume / 100;
     if (isPlaying) {
+      setHasEnded(false)
       audioRef.current.play();
       cancelAnimationFrame(animationRef.current);
       animationRef.current = requestAnimationFrame(whilePlaying);
@@ -42,8 +44,10 @@ const Player = ({ url, round, finished, volume }) => {
         }
       }, (finished ? 30000 : roundParts[round]) - audioRef.current.currentTime * 1000)
     } else {
-      audioRef.current.currentTime = 0;
-      setCurrentTime(0);
+      if (!finished || hasEnded) {
+        audioRef.current.currentTime = 0;
+        setCurrentTime(0);
+      }
       audioRef.current.pause();
       cancelAnimationFrame(animationRef.current);
       clearTimeout(timerRef)
@@ -59,6 +63,7 @@ const Player = ({ url, round, finished, volume }) => {
     setCurrentTime(audioRef.current.currentTime);
     if (audioRef.current.currentTime >= (finished ? 30000 : roundParts[round]) / 1000) {
       setIsPlaying(false)
+      setHasEnded(true)
     }
     if (audioRef.current.paused) {
       setIsPlaying(false)
