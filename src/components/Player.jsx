@@ -63,10 +63,10 @@ const Player = ({ url, round, finished, volume }) => {
     setCurrentTime(audioRef.current.currentTime);
     if (audioRef.current.currentTime >= (finished ? 30000 : roundParts[round]) / 1000) {
       setIsPlaying(false)
-      setHasEnded(true)
     }
     if (audioRef.current.paused) {
       setIsPlaying(false)
+      setHasEnded(true)
     }
     animationRef.current = requestAnimationFrame(whilePlaying);
   };
