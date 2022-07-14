@@ -9,6 +9,7 @@ const PlaylistInfo = ({
     author,
     thumbnail,
     preText,
+    year,
     link = "/",
     songCount,
     external = false,
@@ -64,6 +65,7 @@ const PlaylistInfo = ({
                     <div className="w-full text-left text-gray-700 font-semibold relative pt-3 md:pt-0">
                         <div className="text-2xl text-white leading-tight">
                             {name}
+                            {year ? ` (${year?.substring(0, 4)})` : null}
                         </div>
                         <div className="text-normal text-gray-300">
                             by -{" "}

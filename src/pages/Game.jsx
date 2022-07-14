@@ -77,7 +77,7 @@ const Game = ({ volume }) => {
         apiInstance
             ?.getPlaylist(playlistId, {
                 market: process.env.REACT_APP_SPOTIFY_MARKET,
-                fields: "external_urls,tracks.items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.artists(name)),tracks.total,tracks.offset,name,owner.display_name,images",
+                fields: "external_urls,tracks.items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.album.release_date,track.artists(name)),tracks.total,tracks.offset,name,owner.display_name,images",
             })
             .then(async (data) => {
                 console.log(data);
@@ -97,7 +97,7 @@ const Game = ({ volume }) => {
                             limit: 50,
                             offset: currentTracks,
                             market: process.env.REACT_APP_SPOTIFY_MARKET,
-                            fields: "items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.artists(name)),total,offset",
+                            fields: "items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.album.release_date,track.artists(name)),total,offset",
                         }
                     );
                     allTracks = [
@@ -234,6 +234,7 @@ const Game = ({ volume }) => {
                     .join(", ")}
                 thumbnail={todayTrack?.track?.album?.images?.[0]?.url}
                 link={todayTrack?.track?.external_urls?.spotify}
+                year={todayTrack?.track?.album?.release_date}
                 external={true}
                 isPlaylist={false}
                 preText="Correct Song"
