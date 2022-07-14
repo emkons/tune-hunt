@@ -9,6 +9,7 @@ const useGameData = (playlistId, date) => {
     const finished = useMemo(() => playlistData?.finished || false, [playlistData])
     const correct = useMemo(() => playlistData?.correct || false, [playlistData])
     const todayTrack = useMemo(() => playlistData?.todayTrack || null, [playlistData])
+    const todayTrackIndex = useMemo(() => playlistData?.todayTrackIndex || null, [playlistData])
     const loading = playlistData === 'loading'
 
     const updateValue = async (newValue) => {
@@ -43,8 +44,13 @@ const useGameData = (playlistId, date) => {
         return updateValue({todayTrack: newTodayTrack})
     }
 
+    const setTodayTrackIndex = async (newTodayTrackIndex) => {
+        return updateValue({todayTrackIndex: newTodayTrackIndex})
+    }
+
     return {
         todayTrack, setTodayTrack,
+        todayTrackIndex, setTodayTrackIndex,
         guesses, setGuesses,
         correct, setCorrect,
         finished, setFinished,

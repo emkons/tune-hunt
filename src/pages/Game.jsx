@@ -26,7 +26,6 @@ const Game = ({ volume }) => {
     const [playlistName, setPlaylistName] = useState("");
     const [playlistLink, setPlaylistLink] = useState("");
     const [playlistAuthor, setPlaylistAuthor] = useState("");
-    const [todayIndex, setTodayIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const date = moment().format("YYYY-MM-DD");
 
@@ -59,6 +58,8 @@ const Game = ({ volume }) => {
     const {
         todayTrack,
         setTodayTrack,
+        todayTrackIndex,
+        setTodayTrackIndex,
         guesses,
         setGuesses,
         correct,
@@ -123,17 +124,17 @@ const Game = ({ volume }) => {
         const sequence = getSequence(playlistId, tracks.length);
         console.log(sequence);
         const diffDays = moment().diff(startDate, "days");
-        setTodayIndex(sequence[diffDays % tracks.length]);
+        setTodayTrackIndex(sequence[diffDays % tracks.length]);
     }, [playlistId, tracks]);
 
     useEffect(() => {
-        const track = tracks?.[todayIndex];
+        const track = tracks?.[todayTrackIndex];
         if (track && Object.keys(track).length !== 0) {
             setTodayTrack(track);
             console.log("Setting track");
         }
         // eslint-disable-next-line
-    }, [todayIndex, tracks]);
+    }, [todayTrackIndex, tracks]);
 
     const handleGuess = async (track) => {
         await setGuesses([...guesses, track]);
