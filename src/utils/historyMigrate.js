@@ -50,7 +50,7 @@ const migrateV2 = () => {
     console.log("Migrating favourites to indexed DB")
     
     const favouritesRaw = localStorage.getItem('favourites')
-    const favourites = JSON.parse(favouritesRaw || [])
+    const favourites = JSON.parse(favouritesRaw || '[]')
     favourites.forEach(fav => {
         db.favourites.put(fav)
         localStorage.removeItem('favourites')
