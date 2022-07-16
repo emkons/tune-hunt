@@ -65,8 +65,12 @@ const PlaylistInfo = ({
                     <div className="w-full text-left text-gray-700 font-semibold relative pt-3 md:pt-0">
                         <div className="text-2xl text-white leading-tight">
                             {name}
-                            {year ? ` (${year?.substring(0, 4)})` : null}
                         </div>
+                        {year ? (
+                            <div className="text-normal text-gray-300">
+                                {year?.substring(0, 4)}
+                            </div>
+                        ) : null}
                         <div className="text-normal text-gray-300">
                             by -{" "}
                             <span className="border-b border-dashed border-gray-500 pb-1">
