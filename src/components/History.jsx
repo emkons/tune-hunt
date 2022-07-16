@@ -131,11 +131,13 @@ const History = ({ playlistId, onClose }) => {
                                             {entry?.track?.track?.artists?.map(a => a?.name).join(', ')}
                                         </span>
                                     </div>
-                                    {entry?.correct ? (
-                                        <Check color="green" />
-                                    ) : (
-                                        <X color="red" />
-                                    )}
+                                    <div title={entry?.todayTrackIndex}>
+                                        {entry?.correct ? (
+                                            <Check color="green" />
+                                        ) : (
+                                            <X color="red" />
+                                        )}
+                                    </div>
                                     {entry?.date}
                                 </div>
                             ))}
