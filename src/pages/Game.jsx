@@ -88,7 +88,6 @@ const Game = ({ volume }) => {
                 fields: "external_urls,tracks.items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.album.release_date,track.artists(name)),tracks.total,tracks.offset,name,owner.display_name,images,snapshot_id",
             })
             .then(async (data) => {
-                console.log(data);
                 setPlaylistImage(data.images?.[0]?.url);
                 setPlaylistAuthor(data.owner.display_name);
                 setPlaylistName(data.name);
@@ -115,7 +114,6 @@ const Game = ({ volume }) => {
                         ),
                     ];
                     currentTracks += newData.items.length;
-                    console.log("Additional tracks loaded", newData);
                 }
                 setSnapshotId(data.snapshot_id);
                 await setTracks(allTracks);
@@ -128,11 +126,11 @@ const Game = ({ volume }) => {
     }
 
     useEffect(() => {
+        // setLoading(true)
         if (historyLoading) {
             console.log('History loading...')
             return
         }
-        setLoading(true);
         apiInstance
             ?.getPlaylist(playlistId, {
                 market: process.env.REACT_APP_SPOTIFY_MARKET,
@@ -141,7 +139,7 @@ const Game = ({ volume }) => {
             .then(async (data) => {
                 const newSnapshot = data.snapshot_id
                 setLatestnapshotId(newSnapshot);
-                if (snapshotId === null) {
+                if (snapshotId === null || snapshotId === undefined) {
                     fetchNewSongs()
                 } else {
                     setPlaylistImage(data.images?.[0]?.url);

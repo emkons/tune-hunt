@@ -12,7 +12,9 @@ const useGameData = (playlistId, date) => {
     const todayTrackIndex = useMemo(() => playlistData?.todayTrackIndex === undefined ? null : playlistData?.todayTrackIndex, [playlistData])
     const snapshotId = useMemo(() =>  playlistData?.snapshotId || null, [playlistData])
     const latestSnapshotId = useMemo(() =>  playlistData?.latestSnapshotId || null, [playlistData])
-    const loading = playlistData === 'loading'
+    const loading = useMemo(() => {
+        return playlistData === 'loading' || (playlistData !== undefined && playlistData.id !== playlistId)
+    }, [playlistData, playlistId])
 
     const updateValue = async (newValue) => {
         if (playlistData === undefined) {
