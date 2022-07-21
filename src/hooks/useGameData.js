@@ -10,6 +10,8 @@ const useGameData = (playlistId, date) => {
     const correct = useMemo(() => playlistData?.correct || false, [playlistData])
     const todayTrack = useMemo(() => playlistData?.todayTrack || null, [playlistData])
     const todayTrackIndex = useMemo(() => playlistData?.todayTrackIndex === undefined ? null : playlistData?.todayTrackIndex, [playlistData])
+    const snapshotId = useMemo(() =>  playlistData?.snapshotId || null, [playlistData])
+    const latestSnapshotId = useMemo(() =>  playlistData?.latestSnapshotId || null, [playlistData])
     const loading = playlistData === 'loading'
 
     const updateValue = async (newValue) => {
@@ -48,12 +50,22 @@ const useGameData = (playlistId, date) => {
         return updateValue({todayTrackIndex: newTodayTrackIndex})
     }
 
+    const setSnapshotId = async (newSnapshotId) => {
+        return updateValue({snapshotId: newSnapshotId})
+    }
+
+    const setLatestnapshotId = async (newLatestSnapshotId) => {
+        return updateValue({latestSnapshotId: newLatestSnapshotId})
+    }
+
     return {
         todayTrack, setTodayTrack,
         todayTrackIndex, setTodayTrackIndex,
         guesses, setGuesses,
         correct, setCorrect,
         finished, setFinished,
+        snapshotId, setSnapshotId,
+        latestSnapshotId, setLatestnapshotId,
         historyLoading: loading
     };
 }

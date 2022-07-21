@@ -1,3 +1,4 @@
+import { useLiveQuery } from "dexie-react-hooks";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useMemo } from "react";
@@ -12,6 +13,7 @@ import Player from "../components/Player";
 import PlaylistInfo from "../components/PlaylistInfo";
 import { useFavourites } from "../context/FavouritesContext";
 import { useSpotify } from "../context/SpotifyContext";
+import { db } from "../db";
 import useGameData from "../hooks/useGameData";
 import { getSequence } from "../utils/sequence";
 
@@ -21,7 +23,8 @@ const Game = ({ volume }) => {
     const navigate = useNavigate()
     const { playlistId } = useParams();
     const { apiInstance, removeToken } = useSpotify();
-    const [tracks, setTracks] = useState([]);
+    // const [tracks, setTracks] = useState([]);
+    const tracks = useLiveQuery(() => db.tracks.where('playlist').equals(playlistId).sortBy('key') || [], [playlistId], [])
     const [playlistImage, setPlaylistImage] = useState("");
     const [playlistName, setPlaylistName] = useState("");
     const [playlistLink, setPlaylistLink] = useState("");
@@ -66,19 +69,23 @@ const Game = ({ volume }) => {
         setCorrect,
         finished,
         setFinished,
-        historyLoading
+        historyLoading,
+        snapshotId,
+        setSnapshotId,
+        latestSnapshotId,
+        setLatestnapshotId
     } = useGameData(playlistId, date);
 
-    useEffect(() => {
-        if (historyLoading) {
-            console.log('History loading...')
-            return
-        }
-        setLoading(true);
+    const setTracks = async (newTracks) => {
+        const mappedTracks = newTracks.map((t, index) => ({key: index, playlist: playlistId, ...t}))
+        await db.tracks.bulkPut(mappedTracks)
+    }
+
+    const fetchNewSongs = () => {
         apiInstance
             ?.getPlaylist(playlistId, {
                 market: process.env.REACT_APP_SPOTIFY_MARKET,
-                fields: "external_urls,tracks.items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.album.release_date,track.artists(name)),tracks.total,tracks.offset,name,owner.display_name,images",
+                fields: "external_urls,tracks.items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.album.release_date,track.artists(name)),tracks.total,tracks.offset,name,owner.display_name,images,snapshot_id",
             })
             .then(async (data) => {
                 console.log(data);
@@ -110,17 +117,43 @@ const Game = ({ volume }) => {
                     currentTracks += newData.items.length;
                     console.log("Additional tracks loaded", newData);
                 }
-                setTracks(allTracks);
+                setSnapshotId(data.snapshot_id);
+                await setTracks(allTracks);
                 setLoading(false);
             })
             .catch(() => {
                 setLoading(false);
                 removeToken();
             });
+    }
+
+    useEffect(() => {
+        if (historyLoading) {
+            console.log('History loading...')
+            return
+        }
+        setLoading(true);
+        apiInstance
+            ?.getPlaylist(playlistId, {
+                market: process.env.REACT_APP_SPOTIFY_MARKET,
+                fields: "external_urls,name,owner.display_name,images,snapshot_id",
+            })
+            .then(async (data) => {
+                const newSnapshot = data.snapshot_id
+                setLatestnapshotId(newSnapshot);
+                if (snapshotId === null) {
+                    fetchNewSongs()
+                } else {
+                    setPlaylistImage(data.images?.[0]?.url);
+                    setPlaylistAuthor(data.owner.display_name);
+                    setPlaylistName(data.name);
+                    setPlaylistLink(data.external_urls.spotify);
+                    setLoading(false)
+                }
+            })
     }, [apiInstance, playlistId, historyLoading]);
 
     useEffect(() => {
-        // const availableSequence = tracks.map((t, i) => ({preview_url: t?.track.preview_url, index: i})).filter(t => t.preview_url !== null).map(t => t.index)
         const sequence = getSequence(playlistId, tracks.length);
         console.log(sequence);
         const diffDays = moment().diff(startDate, "days");
