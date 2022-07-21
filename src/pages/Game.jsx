@@ -20,11 +20,16 @@ import { getSequence } from "../utils/sequence";
 const startDate = moment([2022, 5, 13]);
 
 const Game = ({ volume }) => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { playlistId } = useParams();
     const { apiInstance, removeToken } = useSpotify();
     // const [tracks, setTracks] = useState([]);
-    const tracks = useLiveQuery(() => db.tracks.where('playlist').equals(playlistId).sortBy('key') || [], [playlistId], [])
+    const tracks = useLiveQuery(
+        () =>
+            db.tracks.where("playlist").equals(playlistId).sortBy("key") || [],
+        [playlistId],
+        []
+    );
     const [playlistImage, setPlaylistImage] = useState("");
     const [playlistName, setPlaylistName] = useState("");
     const [playlistLink, setPlaylistLink] = useState("");
@@ -34,7 +39,7 @@ const Game = ({ volume }) => {
 
     const [historyOpen, setHistoryOpen] = useState(false);
 
-    const {favourites} = useFavourites();
+    const { favourites } = useFavourites();
     const currentFavouriteIndex = useMemo(
         () => favourites?.findIndex((fav) => fav.id === playlistId),
         [favourites, playlistId]
@@ -73,15 +78,20 @@ const Game = ({ volume }) => {
         snapshotId,
         setSnapshotId,
         latestSnapshotId,
-        setLatestnapshotId
+        setLatestnapshotId,
     } = useGameData(playlistId, date);
 
     const setTracks = async (newTracks) => {
-        const mappedTracks = newTracks.map((t, index) => ({key: index, playlist: playlistId, ...t}))
-        await db.tracks.bulkPut(mappedTracks)
-    }
+        const mappedTracks = newTracks.map((t, index) => ({
+            key: index,
+            playlist: playlistId,
+            ...t,
+        }));
+        await db.tracks.bulkPut(mappedTracks);
+    };
 
     const fetchNewSongs = () => {
+        setLoading(true);
         apiInstance
             ?.getPlaylist(playlistId, {
                 market: process.env.REACT_APP_SPOTIFY_MARKET,
@@ -123,13 +133,13 @@ const Game = ({ volume }) => {
                 setLoading(false);
                 removeToken();
             });
-    }
+    };
 
     useEffect(() => {
         // setLoading(true)
         if (historyLoading) {
-            console.log('History loading...')
-            return
+            console.log("History loading...");
+            return;
         }
         apiInstance
             ?.getPlaylist(playlistId, {
@@ -137,18 +147,18 @@ const Game = ({ volume }) => {
                 fields: "external_urls,name,owner.display_name,images,snapshot_id",
             })
             .then(async (data) => {
-                const newSnapshot = data.snapshot_id
+                const newSnapshot = data.snapshot_id;
                 setLatestnapshotId(newSnapshot);
                 if (snapshotId === null || snapshotId === undefined) {
-                    fetchNewSongs()
+                    fetchNewSongs();
                 } else {
                     setPlaylistImage(data.images?.[0]?.url);
                     setPlaylistAuthor(data.owner.display_name);
                     setPlaylistName(data.name);
                     setPlaylistLink(data.external_urls.spotify);
-                    setLoading(false)
+                    setLoading(false);
                 }
-            })
+            });
     }, [apiInstance, playlistId, historyLoading]);
 
     useEffect(() => {
@@ -180,9 +190,9 @@ const Game = ({ volume }) => {
 
     const handleNavigateToPlaylist = (playlist) => {
         if (playlist !== null) {
-            navigate(`/playlist/${playlist?.id}`)
+            navigate(`/playlist/${playlist?.id}`);
         }
-    }
+    };
 
     const emptyGameScreen = (
         <div className="flex flex-col flex-grow gap-4">
@@ -290,7 +300,7 @@ const Game = ({ volume }) => {
                 </div>
             </div>
             <Content className="grow-0 mx-0">
-                <div className="text-gray-200">
+                <div className="text-gray-200 flex justify-between">
                     <svg
                         onClick={() => setHistoryOpen(true)}
                         xmlns="http://www.w3.org/2000/svg"
@@ -305,6 +315,28 @@ const Game = ({ volume }) => {
                     >
                         <path d="M12 20v-6M6 20V10M18 20V4" />
                     </svg>
+                    {latestSnapshotId !== snapshotId ? (
+                        <div
+                            onClick={() => fetchNewSongs()}
+                            title="Playlist updated. Click the button to refresh. (Warning: Songs may repeat)"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                {" "}
+                                <path d="M2.5 2v6h6M21.5 22v-6h-6" />
+                                <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+                            </svg>
+                        </div>
+                    ) : null}
                 </div>
                 {loading
                     ? loadingScreen()
