@@ -82,6 +82,7 @@ const Game = ({ volume }) => {
     } = useGameData(playlistId, date);
 
     const setTracks = async (newTracks) => {
+        await db.tracks.where({playlist: playlistId}).delete()
         const mappedTracks = newTracks.map((t, index) => ({
             key: index,
             playlist: playlistId,
