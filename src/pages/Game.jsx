@@ -35,7 +35,7 @@ const Game = ({ volume }) => {
     const [playlistLink, setPlaylistLink] = useState("");
     const [playlistAuthor, setPlaylistAuthor] = useState("");
     const [loading, setLoading] = useState(true);
-    const date = moment().format("YYYY-MM-DD");
+    const date = moment().subtract(30, 'minutes').format("YYYY-MM-DD");
 
     const [historyOpen, setHistoryOpen] = useState(false);
 
