@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import useSettings from '../hooks/useSettings'
+import Cog from './icons/Cog'
+import Settings from './Settings'
 
 const Footer = () => {
 
     const [darkMode, setDarkMode] = useSettings('darkMode', () => window.matchMedia('(prefers-color-scheme: dark)').matches)
+    const [settingOpen, setSettingsOpen] = useState(false)
 
     return (
         <section className="text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-300 body-font">
@@ -24,8 +27,13 @@ const Footer = () => {
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                         </svg>
                     </div>
+                    <div onClick={() => setSettingsOpen(!settingOpen)} className="text-gray-400 hover:text-gray-500 pointer-cursor">
+                        <span className="sr-only">Settings</span>
+                        <Cog />
+                    </div>
                 </span>
             </div>
+            {settingOpen ? <Settings onClose={() => setSettingsOpen(!settingOpen)} /> : null}
         </section>
     )
 }

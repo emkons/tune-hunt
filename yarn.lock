@@ -4405,6 +4405,11 @@ file-loader@^6.2.0:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
+
 filelist@^1.0.1:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/filelist/-/filelist-1.0.4.tgz#f78978a1e944775ff9e62e744424f215e58352b5"
@@ -5001,6 +5006,11 @@ indent-string@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-4.0.0.tgz#624f8f4497d619b2d9768531d58f4122854d7251"
   integrity sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==
+
+indexeddb-export-import@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/indexeddb-export-import/-/indexeddb-export-import-2.1.5.tgz#ef2cf2372648b0e88c5bef1da16cff0dd8ffad2f"
+  integrity sha512-gS6gVzFTDuT+r7KyZ3yrzflC8HfktezxAGyImCpICGX5WemMhBLnGaZMkZ0KYj+9hwVAM3dmXMTYy/NvtKAFlQ==
 
 inflight@^1.0.4:
   version "1.0.6"
