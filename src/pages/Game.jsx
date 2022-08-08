@@ -79,6 +79,7 @@ const Game = ({ volume }) => {
         setSnapshotId,
         latestSnapshotId,
         setLatestnapshotId,
+        updateValue
     } = useGameData(playlistId, date);
 
     const setTracks = async (newTracks) => {
@@ -127,6 +128,7 @@ const Game = ({ volume }) => {
                     currentTracks += newData.items.length;
                 }
                 setSnapshotId(data.snapshot_id);
+                updateValue({snapshotId: data.snapshot_id, latestSnapshotId: data.snapshot_id})
                 await setTracks(allTracks);
                 setLoading(false);
             })
@@ -149,7 +151,6 @@ const Game = ({ volume }) => {
             })
             .then(async (data) => {
                 const newSnapshot = data.snapshot_id;
-                setLatestnapshotId(newSnapshot);
                 if (snapshotId === null || snapshotId === undefined) {
                     fetchNewSongs();
                 } else {
@@ -157,6 +158,7 @@ const Game = ({ volume }) => {
                     setPlaylistAuthor(data.owner.display_name);
                     setPlaylistName(data.name);
                     setPlaylistLink(data.external_urls.spotify);
+                    setLatestnapshotId(newSnapshot);
                     setLoading(false);
                 }
             });
