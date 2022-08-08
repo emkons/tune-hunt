@@ -127,7 +127,6 @@ const Game = ({ volume }) => {
                     ];
                     currentTracks += newData.items.length;
                 }
-                setSnapshotId(data.snapshot_id);
                 updateValue({snapshotId: data.snapshot_id, latestSnapshotId: data.snapshot_id})
                 await setTracks(allTracks);
                 setLoading(false);
