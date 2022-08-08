@@ -1,5 +1,6 @@
 import { saveAs } from "file-saver";
 import { clearDatabase, exportToJsonString, importFromJsonString } from "indexeddb-export-import";
+import moment from "moment";
 import React from "react";
 import { useState } from "react";
 import { db } from "../db";
@@ -24,7 +25,8 @@ const Settings = ({ onClose }) => {
                 const fileToSave = new Blob([jsonString], {
                     type: 'application/json'
                 });
-                saveAs(fileToSave, 'spotdle-history.json')
+                const date = moment().format("YYYY-MM-DD");
+                saveAs(fileToSave, `spotdle-history-${date}.json`)
               }
             });
           }).catch(function(e) {

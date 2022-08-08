@@ -24,7 +24,12 @@ const PlaylistSelect = () => {
     const [error, setError] = useState("");
     const { favourites } = useFavourites();
     const [localFavourites, setLocalFavourites] = useState([]);
-    const sensors = useSensors(useSensor(PointerSensor));
+    const sensors = useSensors(useSensor(PointerSensor, {
+        activationConstraint: {
+            delay: 50,
+            tolerance: 5
+        }
+    }));
 
     // Search things
     const [searchQuery, setSearchQuery] = useState("");
