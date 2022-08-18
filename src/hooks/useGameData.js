@@ -68,7 +68,7 @@ const useGameData = (playlistId, date) => {
         finished, setFinished,
         snapshotId, setSnapshotId,
         latestSnapshotId, setLatestnapshotId,
-        historyLoading: loading,
+        historyLoading: loading, playlistData,
         updateValue
     };
 }

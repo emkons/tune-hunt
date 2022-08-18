@@ -75,6 +75,7 @@ const Game = ({ volume }) => {
         finished,
         setFinished,
         historyLoading,
+        playlistData,
         snapshotId,
         setSnapshotId,
         latestSnapshotId,
@@ -161,12 +162,13 @@ const Game = ({ volume }) => {
                     setLoading(false);
                 }
             });
-    }, [apiInstance, playlistId, historyLoading]);
+    }, [historyLoading]);
 
     useEffect(() => {
         const sequence = getSequence(playlistId, tracks.length);
         console.log(sequence);
         const diffDays = moment().subtract(45, 'minutes').diff(startDate, "days");
+        console.log(diffDays)
         setTodayTrackIndex(sequence[diffDays % tracks.length]);
     }, [playlistId, tracks]);
 
