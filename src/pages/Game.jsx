@@ -75,12 +75,12 @@ const Game = ({ volume }) => {
         finished,
         setFinished,
         historyLoading,
-        playlistData,
+        playlistLoading,
         snapshotId,
-        setSnapshotId,
         latestSnapshotId,
         setLatestnapshotId,
-        updateValue
+        updateValue,
+        updatePlaylistValue
     } = useGameData(playlistId, date);
 
     const setTracks = async (newTracks) => {
@@ -128,7 +128,7 @@ const Game = ({ volume }) => {
                     ];
                     currentTracks += newData.items.length;
                 }
-                updateValue({snapshotId: data.snapshot_id, latestSnapshotId: data.snapshot_id})
+                updatePlaylistValue({snapshotId: data.snapshot_id, latestSnapshotId: data.snapshot_id})
                 await setTracks(allTracks);
                 setLoading(false);
             })
@@ -140,8 +140,8 @@ const Game = ({ volume }) => {
 
     useEffect(() => {
         // setLoading(true)
-        if (historyLoading) {
-            console.log("History loading...");
+        if (playlistLoading) {
+            console.log("Playlist loading...");
             return;
         }
         apiInstance
@@ -162,7 +162,7 @@ const Game = ({ volume }) => {
                     setLoading(false);
                 }
             });
-    }, [historyLoading]);
+    }, [playlistLoading]);
 
     useEffect(() => {
         const sequence = getSequence(playlistId, tracks.length);
