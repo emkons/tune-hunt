@@ -4,48 +4,30 @@ import { db } from '../db';
 import useLocalStorage from './useLocalStorage';
 
 const useGameData = (playlistId, date) => {
-    const historyData = useLiveQuery(() => db.playlistHistory.get({id: playlistId, date: date}), [playlistId, date], 'loading')
-    const playlistData = useLiveQuery(() => db.playlist.get({id: playlistId}), [playlistId], 'loading')
-    const guesses = useMemo(() => historyData?.guesses || [], [historyData])
-    const finished = useMemo(() => historyData?.finished || false, [historyData])
-    const correct = useMemo(() => historyData?.correct || false, [historyData])
-    const todayTrack = useMemo(() => historyData?.todayTrack || null, [historyData])
-    const todayTrackIndex = useMemo(() => historyData?.todayTrackIndex === undefined ? null : historyData?.todayTrackIndex, [historyData])
+    const playlistData = useLiveQuery(() => db.playlistHistory.get({id: playlistId, date: date}), [playlistId, date], 'loading')
+    const guesses = useMemo(() => playlistData?.guesses || [], [playlistData])
+    const finished = useMemo(() => playlistData?.finished || false, [playlistData])
+    const correct = useMemo(() => playlistData?.correct || false, [playlistData])
+    const todayTrack = useMemo(() => playlistData?.todayTrack || null, [playlistData])
+    const todayTrackIndex = useMemo(() => playlistData?.todayTrackIndex === undefined ? null : playlistData?.todayTrackIndex, [playlistData])
     const snapshotId = useMemo(() =>  playlistData?.snapshotId || null, [playlistData])
     const latestSnapshotId = useMemo(() =>  playlistData?.latestSnapshotId || null, [playlistData])
-    const playlistLoading = useMemo(() => {
+    const loading = useMemo(() => {
         return playlistData === 'loading' || (playlistData !== undefined && playlistData.id !== playlistId)
     }, [playlistData, playlistId])
-    const historyLoading = useMemo(() => {
-        return historyData === 'loading' || (historyData !== undefined && historyData.id !== playlistId)
-    }, [historyData, playlistId])
 
     const updateValue = async (newValue) => {
-        if (historyData === undefined) {
+        if (playlistData === undefined) {
             db.playlistHistory.put({
                 id: playlistId,
                 date: date,
-                ...historyData,
+                ...playlistData,
                 ...newValue
             })
         } else {
             db.playlistHistory.update({
                 id: playlistId,
                 date: date
-            }, newValue)
-        }
-    }
-
-    const updatePlaylistValue = async (newValue) => {
-        if (playlistData === undefined) {
-            db.playlist.put({
-                id: playlistId,
-                ...playlistData,
-                ...newValue
-            })
-        } else {
-            db.playlist.update({
-                id: playlistId
             }, newValue)
         }
     }
@@ -71,11 +53,11 @@ const useGameData = (playlistId, date) => {
     }
 
     const setSnapshotId = async (newSnapshotId) => {
-        return updatePlaylistValue({snapshotId: newSnapshotId})
+        return updateValue({snapshotId: newSnapshotId})
     }
 
     const setLatestnapshotId = async (newLatestSnapshotId) => {
-        return updatePlaylistValue({latestSnapshotId: newLatestSnapshotId})
+        return updateValue({latestSnapshotId: newLatestSnapshotId})
     }
 
     return {
@@ -86,8 +68,7 @@ const useGameData = (playlistId, date) => {
         finished, setFinished,
         snapshotId, setSnapshotId,
         latestSnapshotId, setLatestnapshotId,
-        historyLoading, historyData,
-        playlistLoading, updatePlaylistValue,
+        historyLoading: loading, playlistData,
         updateValue
     };
 }
