@@ -139,7 +139,7 @@ const Game = ({ volume }) => {
     };
 
     useEffect(() => {
-        // setLoading(true)
+        setLoading(true)
         if (playlistLoading) {
             console.log("Playlist loading...");
             return;
@@ -294,7 +294,7 @@ const Game = ({ volume }) => {
             <div className="flex items-center">
                 <div
                     className={
-                        finished && prevFavourite
+                        prevFavourite
                             ? "text-indigo-500 cursor-pointer"
                             : "text-transparent"
                     }
@@ -357,7 +357,7 @@ const Game = ({ volume }) => {
             <div className="flex items-center">
                 <div
                     className={
-                        finished && nextFavourite
+                        nextFavourite
                             ? "text-indigo-500 cursor-pointer"
                             : "text-transparent"
                     }
