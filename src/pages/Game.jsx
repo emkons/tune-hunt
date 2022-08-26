@@ -35,7 +35,7 @@ const Game = ({ volume }) => {
     const [playlistLink, setPlaylistLink] = useState("");
     const [playlistAuthor, setPlaylistAuthor] = useState("");
     const [loading, setLoading] = useState(true);
-    const date = moment().subtract(25, 'minutes').format("YYYY-MM-DD");
+    const date = moment().subtract(1380, 'minutes').format("YYYY-MM-DD");
 
     const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -167,13 +167,14 @@ const Game = ({ volume }) => {
     useEffect(() => {
         const sequence = getSequence(playlistId, tracks.length);
         console.log(sequence);
-        const diffDays = moment().subtract(25, 'minutes').diff(startDate, "days");
+        const diffDays = moment().subtract(1380, 'minutes').diff(startDate, "days");
         console.log(diffDays)
         setTodayTrackIndex(sequence[diffDays % tracks.length]);
     }, [playlistId, tracks]);
 
     useEffect(() => {
         const track = tracks?.[todayTrackIndex];
+        console.log(track)
         if (track && Object.keys(track).length !== 0) {
             setTodayTrack(track);
             console.log("Setting track");
