@@ -179,6 +179,22 @@ const PlaylistSelect = () => {
     return (
         <Content>
             <div className="container mx-auto px-4 py-14 sm:px-6 xl:px-12">
+                <div className="text-gray-200">
+                    <svg
+                        onClick={() => navigate('/stats')}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <path d="M12 20v-6M6 20V10M18 20V4" />
+                    </svg>
+                </div>
                 <div className="flex flex-col items-center justify-center space-y-6 text-center">
                     <h1 className="text-4xl font-bold tracking-normal sm:text-5xl dark:text-gray-300 lg:text-6xl">
                         Select Playlist
