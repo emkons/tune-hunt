@@ -35,7 +35,7 @@ const Game = ({ volume }) => {
     const [playlistLink, setPlaylistLink] = useState("");
     const [playlistAuthor, setPlaylistAuthor] = useState("");
     const [loading, setLoading] = useState(true);
-    const date = moment().subtract(25, 'minutes').format("YYYY-MM-DD");
+    const date = moment().subtract(25, "minutes").format("YYYY-MM-DD");
 
     const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -80,11 +80,11 @@ const Game = ({ volume }) => {
         setSnapshotId,
         latestSnapshotId,
         setLatestnapshotId,
-        updateValue
+        updateValue,
     } = useGameData(playlistId, date);
 
     const setTracks = async (newTracks) => {
-        await db.tracks.where({playlist: playlistId}).delete()
+        await db.tracks.where({ playlist: playlistId }).delete();
         const mappedTracks = newTracks.map((t, index) => ({
             key: index,
             playlist: playlistId,
@@ -128,7 +128,10 @@ const Game = ({ volume }) => {
                     ];
                     currentTracks += newData.items.length;
                 }
-                updateValue({snapshotId: data.snapshot_id, latestSnapshotId: data.snapshot_id})
+                updateValue({
+                    snapshotId: data.snapshot_id,
+                    latestSnapshotId: data.snapshot_id,
+                });
                 await setTracks(allTracks);
                 setLoading(false);
             })
@@ -167,8 +170,10 @@ const Game = ({ volume }) => {
     useEffect(() => {
         const sequence = getSequence(playlistId, tracks.length);
         console.log(sequence);
-        const diffDays = moment().subtract(25, 'minutes').diff(startDate, "days");
-        console.log(diffDays)
+        const diffDays = moment()
+            .subtract(25, "minutes")
+            .diff(startDate, "days");
+        console.log(diffDays);
         setTodayTrackIndex(sequence[diffDays % tracks.length]);
     }, [playlistId, tracks]);
 
@@ -294,7 +299,7 @@ const Game = ({ volume }) => {
             <div className="flex items-center">
                 <div
                     className={
-                        finished && prevFavourite
+                        prevFavourite
                             ? "text-indigo-500 cursor-pointer"
                             : "text-transparent"
                     }
@@ -357,7 +362,7 @@ const Game = ({ volume }) => {
             <div className="flex items-center">
                 <div
                     className={
-                        finished && nextFavourite
+                        nextFavourite
                             ? "text-indigo-500 cursor-pointer"
                             : "text-transparent"
                     }
