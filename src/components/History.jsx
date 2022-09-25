@@ -125,10 +125,17 @@ const History = ({ playlistId, onClose }) => {
                                     key={entry.date}
                                     className="flex flex-col items-center"
                                 >
+                                    {entry?.track?.track?.album?.images?.[0]?.url ? (
+                                        <img
+                                            className="w-32 aspect-square object-cover rounded-lg shadow-lg antialiased"
+                                            alt={entry?.track?.track?.name}
+                                            src={entry?.track?.track?.album?.images?.[0]?.url}
+                                        />
+                                    ) : null}
                                     <div>
-                                        {entry?.track?.track?.name}{" - "}
+                                        {entry?.track?.track?.artists?.map(a => a?.name).join(', ')}{" - "}
                                         <span>
-                                            {entry?.track?.track?.artists?.map(a => a?.name).join(', ')}
+                                            {entry?.track?.track?.name}
                                         </span>
                                     </div>
                                     <div title={entry?.todayTrackIndex}>
