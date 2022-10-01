@@ -15,7 +15,7 @@
         },
         "rate": {
             "quantity": 250,
-            "delay": 10
+            "delay": 1000
         }
     },
     "particles": {
