@@ -4,13 +4,18 @@
         "zIndex": 1
     },
     "emitters": {
+        "life": {
+            "count": 0,
+            "duration": 0.1,
+            "delay": 0.4
+        },
         "position": {
             "x": 50,
-            "y": 100
+            "y": 75
         },
         "rate": {
-            "quantity": 10,
-            "delay": 0.15
+            "quantity": 250,
+            "delay": 10
         }
     },
     "particles": {
