@@ -1,7 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
-import { useMemo } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AnswerInput from "../components/AnswerInput";
 import Content from "../components/Content";
@@ -16,6 +15,8 @@ import { useSpotify } from "../context/SpotifyContext";
 import { db } from "../db";
 import useGameData from "../hooks/useGameData";
 import { getSequence } from "../utils/sequence";
+import Particles from "react-particles";
+import { loadFull } from "tsparticles";
 
 const startDate = moment([2022, 5, 13]);
 
@@ -35,6 +36,7 @@ const Game = ({ volume }) => {
     const [playlistLink, setPlaylistLink] = useState("");
     const [playlistAuthor, setPlaylistAuthor] = useState("");
     const [loading, setLoading] = useState(true);
+    const [particlesContainer, setParticlesContainer] = useState(null);
     const date = moment().subtract(25, "minutes").format("YYYY-MM-DD");
 
     const [historyOpen, setHistoryOpen] = useState(false);
@@ -82,6 +84,29 @@ const Game = ({ volume }) => {
         setLatestnapshotId,
         updateValue,
     } = useGameData(playlistId, date);
+
+    const particlesInit = useCallback(async (engine) => {
+        // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
+        // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
+        // starting from v2 you can add only the features you need reducing the bundle size
+        await loadFull(engine);
+    }, []);
+
+    const particlesLoaded = useCallback(async (container) => {
+        // container.stop();
+        setParticlesContainer(container);
+    }, []);
+
+    useEffect(() => {
+        if (particlesContainer) {
+            if (finished && correct) {
+                particlesContainer.start()
+                particlesContainer.play()
+            } else {
+                particlesContainer.stop()
+            }
+        }
+    }, [particlesContainer, correct, finished])
 
     const setTracks = async (newTracks) => {
         await db.tracks.where({ playlist: playlistId }).delete();
@@ -223,32 +248,34 @@ const Game = ({ volume }) => {
     const gameScreen = () => (
         <>
             {tracks.length > 0 ? (
-                <div className="flex flex-col flex-grow justify-between items-center">
-                    <PlaylistInfo
-                        id={playlistId}
-                        name={playlistName}
-                        author={playlistAuthor}
-                        thumbnail={playlistImage}
-                        link={playlistLink}
-                        external={true}
-                        preText="Currently playing"
-                    />
-                    <Guesses guesses={guesses} correctTrack={todayTrack} />
-                    <Player
-                        volume={volume}
-                        url={todayTrack?.track?.preview_url}
-                        round={guesses.length}
-                    />
-                    <AnswerInput
-                        tracks={tracks.filter(
-                            (t) =>
-                                !guesses.some(
-                                    (g) => g?.track?.id === t?.track?.id
-                                )
-                        )}
-                        onSubmit={handleGuess}
-                    />
-                </div>
+                <>
+                    <div className="flex flex-col flex-grow justify-between items-center">
+                        <PlaylistInfo
+                            id={playlistId}
+                            name={playlistName}
+                            author={playlistAuthor}
+                            thumbnail={playlistImage}
+                            link={playlistLink}
+                            external={true}
+                            preText="Currently playing"
+                        />
+                        <Guesses guesses={guesses} correctTrack={todayTrack} />
+                        <Player
+                            volume={volume}
+                            url={todayTrack?.track?.preview_url}
+                            round={guesses.length}
+                        />
+                        <AnswerInput
+                            tracks={tracks.filter(
+                                (t) =>
+                                    !guesses.some(
+                                        (g) => g?.track?.id === t?.track?.id
+                                    )
+                            )}
+                            onSubmit={handleGuess}
+                        />
+                    </div>
+                </>
             ) : (
                 emptyGameScreen
             )}
@@ -295,83 +322,91 @@ const Game = ({ volume }) => {
     );
 
     return (
-        <div className="flex-grow flex justify-center">
-            <div className="flex items-center">
-                <div
-                    className={
-                        prevFavourite
-                            ? "text-indigo-500 cursor-pointer"
-                            : "text-transparent"
-                    }
-                    onClick={() => handleNavigateToPlaylist(prevFavourite)}
-                >
-                    <ArrowLeft size={96} />
-                </div>
-            </div>
-            <Content className="grow-0 mx-0">
-                <div className="text-gray-200 flex justify-between">
-                    <svg
-                        onClick={() => setHistoryOpen(true)}
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+        <>
+            <Particles
+                    id="tsparticles"
+                    url="/confetti.json"
+                    init={particlesInit}
+                    loaded={particlesLoaded}
+                />
+            <div className="flex-grow flex justify-center z-10">
+                <div className="flex items-center">
+                    <div
+                        className={
+                            prevFavourite
+                                ? "text-indigo-500 cursor-pointer"
+                                : "text-transparent"
+                        }
+                        onClick={() => handleNavigateToPlaylist(prevFavourite)}
                     >
-                        <path d="M12 20v-6M6 20V10M18 20V4" />
-                    </svg>
-                    {latestSnapshotId !== snapshotId ? (
-                        <div
-                            onClick={() => fetchNewSongs()}
-                            title="Playlist updated. Click the button to refresh. (Warning: Songs may repeat)"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                {" "}
-                                <path d="M2.5 2v6h6M21.5 22v-6h-6" />
-                                <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-                            </svg>
-                        </div>
-                    ) : null}
+                        <ArrowLeft size={96} />
+                    </div>
                 </div>
-                {loading
-                    ? loadingScreen()
-                    : finished
-                    ? endScreen()
-                    : gameScreen()}
-                {historyOpen ? (
-                    <History
-                        playlistId={playlistId}
-                        onClose={() => setHistoryOpen(false)}
-                    />
-                ) : null}
-            </Content>
-            <div className="flex items-center">
-                <div
-                    className={
-                        nextFavourite
-                            ? "text-indigo-500 cursor-pointer"
-                            : "text-transparent"
-                    }
-                    onClick={() => handleNavigateToPlaylist(nextFavourite)}
-                >
-                    <ArrowRight size={96} />
+                <Content className="grow-0 mx-0">
+                    <div className="text-gray-200 flex justify-between">
+                        <svg
+                            onClick={() => setHistoryOpen(true)}
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M12 20v-6M6 20V10M18 20V4" />
+                        </svg>
+                        {latestSnapshotId !== snapshotId ? (
+                            <div
+                                onClick={() => fetchNewSongs()}
+                                title="Playlist updated. Click the button to refresh. (Warning: Songs may repeat)"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="1"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    {" "}
+                                    <path d="M2.5 2v6h6M21.5 22v-6h-6" />
+                                    <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
+                                </svg>
+                            </div>
+                        ) : null}
+                    </div>
+                    {loading
+                        ? loadingScreen()
+                        : finished
+                        ? endScreen()
+                        : gameScreen()}
+                    {historyOpen ? (
+                        <History
+                            playlistId={playlistId}
+                            onClose={() => setHistoryOpen(false)}
+                        />
+                    ) : null}
+                </Content>
+                <div className="flex items-center">
+                    <div
+                        className={
+                            nextFavourite
+                                ? "text-indigo-500 cursor-pointer"
+                                : "text-transparent"
+                        }
+                        onClick={() => handleNavigateToPlaylist(nextFavourite)}
+                    >
+                        <ArrowRight size={96} />
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
