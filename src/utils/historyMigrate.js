@@ -76,8 +76,17 @@ export const migrateToFirebase = async (updateFavourites, session) => {
     console.log(localHistory)
     const recordCount = localHistory?.length || 0
     let uploadedCount = 0
+    const updateStatus = () => {
+        uploadedCount++;
+        toast.update(toastId, {progress: uploadedCount / recordCount})
+        if (uploadedCount === recordCount) {
+            toast.done(toastId)
+            toast('Migration finished.')
+        }
+    }
     localHistory.forEach(async (h, index) => {
         if (!h.finished) {
+            updateStatus()
             return;
         }
         const historyRef = doc(getFirestore(), `/sessions/${session}/history/${h.id}-${h.date}`)
@@ -91,11 +100,6 @@ export const migrateToFirebase = async (updateFavourites, session) => {
             todayTrackIndex: h.todayTrackIndex || 0,
             snapshotId: h.snapshotId || 0
         }, {merge: true})
-        uploadedCount++;
-        toast.update(toastId, {progress: uploadedCount / recordCount})
-        if (uploadedCount === recordCount) {
-            toast.done(toastId)
-            toast('Migration finished.')
-        }
+        updateStatus()
     })
 }
