@@ -11,9 +11,12 @@ import PlaylistSelect from './pages/PlaylistSelect';
 import Game from './pages/Game';
 import { SpotifyProvider } from './context/SpotifyContext';
 import { FavouritesProvider } from './context/FavouritesContext';
+import { FirebaseProvider } from './context/FirebaseContext'
 import Search from './pages/Search';
 import useSettings from './hooks/useSettings';
 import DailyStats from './pages/DailyStats';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [volume, setVolume] = useSettings('volume', 50)
@@ -23,23 +26,26 @@ function App() {
     <div className={darkMode ? 'dark' : ''}>
       <div className="min-h-screen flex flex-col dark:bg-gray-700">
         <BrowserRouter>
-          <SpotifyProvider>
+          <FirebaseProvider>
             <FavouritesProvider>
-              <Header volume={volume} setVolume={setVolume}></Header>
-              <Routes>
-                <Route path='/'>
-                  <Route index element={<Login />} />
-                  <Route path='stats' element={<DailyStats />} />
-                  {/* <Route path='search' element={<Search />} /> */}
-                  <Route path="playlist">
-                    <Route index element={<PlaylistSelect />} />
-                    <Route path=":playlistId" element={<Game volume={volume} />} />
+              <SpotifyProvider>
+                <Header volume={volume} setVolume={setVolume}></Header>
+                <Routes>
+                  <Route path='/'>
+                    <Route index element={<Login />} />
+                    <Route path='stats' element={<DailyStats />} />
+                    {/* <Route path='search' element={<Search />} /> */}
+                    <Route path="playlist">
+                      <Route index element={<PlaylistSelect />} />
+                      <Route path=":playlistId" element={<Game volume={volume} />} />
+                    </Route>
                   </Route>
-                </Route>
-              </Routes>
-              <Footer></Footer>
+                </Routes>
+                <Footer></Footer>
+                <ToastContainer theme='dark' />
+              </SpotifyProvider>
             </FavouritesProvider>
-          </SpotifyProvider>
+          </FirebaseProvider>
         </BrowserRouter>
       </div>
     </div>

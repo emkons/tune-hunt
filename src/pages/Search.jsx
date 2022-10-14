@@ -13,7 +13,7 @@ const Search = () => {
     const [loading, setLoading] = useState(false);
     const [playlists, setPlaylists] = useState([]);
     const { favourites } = useFavourites();
-    const { apiInstance, removeToken } = useSpotify();
+    const { apiInstance, errorHandler } = useSpotify();
     const requestRateLimitRef = useRef(null);
 
     const onTextChange = (event) => {
@@ -36,10 +36,7 @@ const Search = () => {
                     setPlaylists(data?.playlists?.items);
                     setLoading(false);
                 })
-                .catch((error) => {
-                    console.error(error);
-                    setLoading(false);
-                });
+                .catch(errorHandler);
         }, 1000);
     }, [apiInstance, searchQuery]);
 

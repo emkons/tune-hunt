@@ -23,7 +23,7 @@ const startDate = moment([2022, 5, 13]);
 const Game = ({ volume }) => {
     const navigate = useNavigate();
     const { playlistId } = useParams();
-    const { apiInstance, removeToken } = useSpotify();
+    const { apiInstance, errorHandler } = useSpotify();
     // const [tracks, setTracks] = useState([]);
     const tracks = useLiveQuery(
         () =>
@@ -77,12 +77,9 @@ const Game = ({ volume }) => {
         finished,
         setFinished,
         historyLoading,
-        playlistData,
         snapshotId,
         setSnapshotId,
-        latestSnapshotId,
-        setLatestnapshotId,
-        updateValue,
+        save,
     } = useGameData(playlistId, date);
 
     const particlesInit = useCallback(async (engine) => {
@@ -135,35 +132,33 @@ const Game = ({ volume }) => {
                 );
                 let totalTracks = data.tracks.total;
                 let currentTracks = data.tracks.items.length;
-                while (currentTracks < totalTracks) {
-                    const newData = await apiInstance?.getPlaylistTracks(
-                        playlistId,
-                        {
-                            limit: 50,
-                            offset: currentTracks,
-                            market: process.env.REACT_APP_SPOTIFY_MARKET,
-                            fields: "items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.album.release_date,track.artists(name)),total,offset",
-                        }
-                    );
-                    allTracks = [
-                        ...allTracks,
-                        ...newData.items.filter(
-                            (t) => t?.track?.preview_url !== null
-                        ),
-                    ];
-                    currentTracks += newData.items.length;
+                try {
+                    while (currentTracks < totalTracks) {
+                        const newData = await apiInstance?.getPlaylistTracks(
+                            playlistId,
+                            {
+                                limit: 50,
+                                offset: currentTracks,
+                                market: process.env.REACT_APP_SPOTIFY_MARKET,
+                                fields: "items(track.name,track.external_urls,track.preview_url,track.id,track.href,track.album.images,track.album.release_date,track.artists(name)),total,offset",
+                            }
+                        );
+                        allTracks = [
+                            ...allTracks,
+                            ...newData.items.filter(
+                                (t) => t?.track?.preview_url !== null
+                            ),
+                        ];
+                        currentTracks += newData.items.length;
+                    }
+                } catch (err) {
+                    errorHandler(err)
                 }
-                updateValue({
-                    snapshotId: data.snapshot_id,
-                    latestSnapshotId: data.snapshot_id,
-                });
+                setSnapshotId(data.snapshot_id)
                 await setTracks(allTracks);
                 setLoading(false);
             })
-            .catch(() => {
-                setLoading(false);
-                removeToken();
-            });
+            .catch(errorHandler);
     };
 
     useEffect(() => {
@@ -186,11 +181,10 @@ const Game = ({ volume }) => {
                     setPlaylistAuthor(data.owner.display_name);
                     setPlaylistName(data.name);
                     setPlaylistLink(data.external_urls.spotify);
-                    setLatestnapshotId(newSnapshot);
                     setLoading(false);
                 }
-            });
-    }, [historyLoading]);
+            }).catch(errorHandler);
+    }, [historyLoading, apiInstance]);
 
     useEffect(() => {
         const sequence = getSequence(playlistId, tracks.length);
@@ -212,14 +206,15 @@ const Game = ({ volume }) => {
     }, [todayTrackIndex, tracks]);
 
     const handleGuess = async (track) => {
-        await setGuesses([...guesses, track]);
         if (track?.track?.id === todayTrack?.track?.id) {
-            await setCorrect(true);
-            await setFinished(true);
+            setCorrect(true);
+            setFinished(true);
         }
         if (guesses.length === 5) {
-            await setFinished(true);
+            setFinished(true);
         }
+        setGuesses([...guesses, track]);
+        save()
     };
 
     const handleNavigateToPlaylist = (playlist) => {
@@ -343,7 +338,7 @@ const Game = ({ volume }) => {
                     </div>
                 </div>
                 <Content className="grow-0 mx-0">
-                    <div className="text-gray-200 flex justify-between">
+                    {/* <div className="text-gray-200 flex justify-between">
                         <svg
                             onClick={() => setHistoryOpen(true)}
                             xmlns="http://www.w3.org/2000/svg"
@@ -358,29 +353,7 @@ const Game = ({ volume }) => {
                         >
                             <path d="M12 20v-6M6 20V10M18 20V4" />
                         </svg>
-                        {latestSnapshotId !== snapshotId ? (
-                            <div
-                                onClick={() => fetchNewSongs()}
-                                title="Playlist updated. Click the button to refresh. (Warning: Songs may repeat)"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    {" "}
-                                    <path d="M2.5 2v6h6M21.5 22v-6h-6" />
-                                    <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2" />
-                                </svg>
-                            </div>
-                        ) : null}
-                    </div>
+                    </div> */}
                     {loading
                         ? loadingScreen()
                         : finished

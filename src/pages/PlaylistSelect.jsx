@@ -17,12 +17,15 @@ import { useEffect } from "react";
 import { useMemo } from "react";
 import { useSpotify } from "../context/SpotifyContext";
 import PlaylistInfo from "../components/PlaylistInfo";
+import { useFirebase } from "../context/FirebaseContext";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { migrateToFirebase } from "../utils/historyMigrate";
 
 const PlaylistSelect = () => {
     const navigate = useNavigate();
     // const [link, setLink] = useState("");
     const [error, setError] = useState("");
-    const { favourites } = useFavourites();
+    const { favourites, updateFavourites } = useFavourites();
     const [localFavourites, setLocalFavourites] = useState([]);
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
@@ -38,7 +41,8 @@ const PlaylistSelect = () => {
     const [isPlaylistLink, setIsPlaylistLink] = useState(false);
     const [searching, setSearching] = useState(false);
     const [playlists, setPlaylists] = useState([]);
-    const { apiInstance, removeToken } = useSpotify();
+    const { apiInstance, errorHandler } = useSpotify();
+    const {user, session} = useFirebase()
     const requestRateLimitRef = useRef(null);
 
     useEffect(() => {
@@ -98,10 +102,7 @@ const PlaylistSelect = () => {
                     setPlaylists(data?.playlists?.items);
                     setLoading(false);
                 })
-                .catch((error) => {
-                    console.error(error);
-                    setLoading(false);
-                });
+                .catch(errorHandler);
         }, 1000);
     }, [apiInstance, searchQuery, isLink]);
 
@@ -134,25 +135,37 @@ const PlaylistSelect = () => {
                 overIndex
             ).map((fav, index) => ({ ...fav, position: index }));
             setLocalFavourites(reorderedList);
-            db.favourites.bulkPut(reorderedList);
+
+            updateFavourites(reorderedList)
         }
     };
 
     const FavouritesList = (
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-            <SortableContext items={visibleFavourites || []}>
-                {(visibleFavourites || []).map((fav) => (
-                    <PlaylistInfoSortable
-                        key={fav.id}
-                        id={fav.id}
-                        name={fav.name}
-                        author={fav.author}
-                        thumbnail={fav.thumbnail}
-                        link={`/playlist/${fav.id}`}
-                    />
-                ))}
-            </SortableContext>
-        </DndContext>
+        <div className={`grid grid-cols-1 md:grid-cols-2 col-span-2 gap-4 ${!visibleFavourites?.length ? '': null}`}>
+            {!visibleFavourites?.length ? (
+            <div className="max-w-screen-sm text-lg text-gray-600 dark:text-gray-300 sm:text-2xl col-span-2">
+                We recently moved storage from local DB to server.
+                <br />
+                If you have not yet migrated, press the button below.
+                <br />
+                <button className="mx-auto text-xl font-black leading-none text-gray-900 pointer dark:text-gray-300 select-none" onClick={() => migrateToFirebase(updateFavourites, session)}>Migrate</button>
+            </div>
+            ) : null}
+            <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                <SortableContext items={visibleFavourites || []}>
+                    {(visibleFavourites || []).map((fav) => (
+                        <PlaylistInfoSortable
+                            key={fav.id}
+                            id={fav.id}
+                            name={fav.name}
+                            author={fav.author}
+                            thumbnail={fav.thumbnail}
+                            link={`/playlist/${fav.id}`}
+                        />
+                    ))}
+                </SortableContext>
+            </DndContext>
+        </div>
     );
 
     const SearchResults = (
@@ -179,7 +192,7 @@ const PlaylistSelect = () => {
     return (
         <Content>
             <div className="container mx-auto px-4 py-14 sm:px-6 xl:px-12">
-                <div className="text-gray-200">
+                {/* <div className="text-gray-200">
                     <svg
                         onClick={() => navigate('/stats')}
                         xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +207,7 @@ const PlaylistSelect = () => {
                     >
                         <path d="M12 20v-6M6 20V10M18 20V4" />
                     </svg>
-                </div>
+                </div> */}
                 <div className="flex flex-col items-center justify-center space-y-6 text-center">
                     <h1 className="text-4xl font-bold tracking-normal sm:text-5xl dark:text-gray-300 lg:text-6xl">
                         Select Playlist

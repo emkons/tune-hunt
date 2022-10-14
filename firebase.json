@@ -1,0 +1,46 @@
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ],
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "/redirect",
+        "function": "redirect",
+        "region": "europe-west3",
+        "headers": [ {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        } ]    
+      },
+      {
+        "source": "/token",
+        "function": "token",
+        "region": "europe-west3",
+        "headers": [ {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        } ]    
+      },
+      {
+        "source": "/refresh",
+        "function": "refresh",
+        "region": "europe-west3",
+        "headers": [ {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        } ]    
+      }
+    ]
+  }
+}
