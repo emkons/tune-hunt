@@ -1,0 +1,3 @@
+service-account.json
+*.log
+node_modules

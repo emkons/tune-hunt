@@ -1,15 +1,20 @@
 import React, { useState } from 'react'
+import { useFavourites } from '../context/FavouritesContext'
+import { useFirebase } from '../context/FirebaseContext'
 import useSettings from '../hooks/useSettings'
+import { migrateToFirebase } from '../utils/historyMigrate'
 import Cog from './icons/Cog'
+import UploadCloud from './icons/UploadCloud'
 import Settings from './Settings'
 
 const Footer = () => {
-
+    const { session } = useFirebase()
+    const { updateFavourites } = useFavourites()
     const [darkMode, setDarkMode] = useSettings('darkMode', () => window.matchMedia('(prefers-color-scheme: dark)').matches)
     const [settingOpen, setSettingsOpen] = useState(false)
 
     return (
-        <section className="text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-300 body-font">
+        <section className="text-gray-700 bg-white dark:bg-gray-700 dark:text-gray-300 body-font z-20">
             <div className="container flex flex-col items-center px-8 py-8 mx-auto max-w-7xl sm:flex-row">
                 <a href="#_" className="text-xl font-black leading-none text-gray-900 dark:text-gray-300 select-none logo">emkons<span className="text-indigo-600 dark:text-gray-200">.</span></a>
                 <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 sm:ml-4 sm:pl-4 sm:border-l sm:border-gray-200 sm:mt-0">© 2022
@@ -31,6 +36,12 @@ const Footer = () => {
                         <span className="sr-only">Settings</span>
                         <Cog />
                     </div>
+                    {/* {session ? (
+                    <div onClick={() => migrateToFirebase(updateFavourites, session)} className="text-gray-400 hover:text-gray-500 pointer-cursor">
+                        <span className="sr-only">Migrate</span>
+                        <UploadCloud />
+                    </div>
+                    ) : null} */}
                 </span>
             </div>
             {settingOpen ? <Settings onClose={() => setSettingsOpen(!settingOpen)} /> : null}

@@ -1,4 +1,6 @@
+import { doc, getFirestore, setDoc } from "firebase/firestore"
 import { db } from "../db"
+import { toast } from 'react-toastify';
 
 export const migrate = () => {
     let migrated = localStorage.getItem('migrated')
@@ -63,4 +65,37 @@ const migrateV3 = async () => {
     const favourites = await db.favourites.toArray()
     const orderedList = favourites.map((fav, index) => ({position: index, ...fav}))
     db.favourites.bulkPut(orderedList)
+}
+
+export const migrateToFirebase = async (updateFavourites, session) => {
+    const toastId = toast('Migrating. Do not refresh the page.', {progress: 0, autoClose: false, closeButton: false})
+    const localFavs = await db.favourites.orderBy('position').toArray()
+    updateFavourites(localFavs)
+    
+    const localHistory = await db.playlistHistory.toArray()
+    console.log(localHistory)
+    const recordCount = localHistory?.length || 0
+    let uploadedCount = 0
+    localHistory.forEach(async (h, index) => {
+        if (!h.finished) {
+            return;
+        }
+        const historyRef = doc(getFirestore(), `/sessions/${session}/history/${h.id}-${h.date}`)
+        await setDoc(historyRef, {
+            playlistId: h.id,
+            date: h.date,
+            guesses: h.guesses || [],
+            finished: h.finished || false,
+            correct: h.correct || false,
+            todayTrack: h.todayTrack || {},
+            todayTrackIndex: h.todayTrackIndex || 0,
+            snapshotId: h.snapshotId || 0
+        }, {merge: true})
+        uploadedCount++;
+        toast.update(toastId, {progress: uploadedCount / recordCount})
+        if (uploadedCount === recordCount) {
+            toast.done(toastId)
+            toast('Migration finished.')
+        }
+    })
 }
