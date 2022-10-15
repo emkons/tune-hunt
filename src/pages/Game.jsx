@@ -165,6 +165,7 @@ const Game = ({ volume }) => {
         // setLoading(true)
         if (historyLoading) {
             console.log("History loading...");
+            setLoading(true);
             return;
         }
         apiInstance
