@@ -175,15 +175,7 @@ const Game = ({ volume }) => {
             })
             .then(async (data) => {
                 const newSnapshot = data.snapshot_id;
-                if (snapshotId === null || snapshotId === undefined) {
-                    fetchNewSongs();
-                } else {
-                    setPlaylistImage(data.images?.[0]?.url);
-                    setPlaylistAuthor(data.owner.display_name);
-                    setPlaylistName(data.name);
-                    setPlaylistLink(data.external_urls.spotify);
-                    setLoading(false);
-                }
+                fetchNewSongs();
             }).catch(errorHandler);
     }, [historyLoading, apiInstance]);
 
