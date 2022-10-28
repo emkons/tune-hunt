@@ -25,7 +25,7 @@ const Settings = ({ onClose }) => {
                 const fileToSave = new Blob([jsonString], {
                     type: 'application/json'
                 });
-                const date = moment().subtract(25, 'minutes').format("YYYY-MM-DD");
+                const date = moment().subtract(120, 'minutes').format("YYYY-MM-DD");
                 saveAs(fileToSave, `spotdle-history-${date}.json`)
               }
             });
