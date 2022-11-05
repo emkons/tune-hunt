@@ -37,7 +37,7 @@ const Game = ({ volume }) => {
     const [playlistAuthor, setPlaylistAuthor] = useState("");
     const [loading, setLoading] = useState(true);
     const [particlesContainer, setParticlesContainer] = useState(null);
-    const date = moment().subtract(120, "minutes").format("YYYY-MM-DD");
+    const date = moment().subtract(150, "minutes").format("YYYY-MM-DD");
 
     const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -183,7 +183,7 @@ const Game = ({ volume }) => {
         const sequence = getSequence(playlistId, tracks.length);
         console.log(sequence);
         const diffDays = moment()
-            .subtract(120, "minutes")
+            .subtract(150, "minutes")
             .diff(startDate, "days");
         console.log(diffDays);
         setTodayTrackIndex(sequence[diffDays % tracks.length]);
