@@ -25,7 +25,7 @@ const Header = ({volume, setVolume}) => {
             <div className="container flex flex-col flex-wrap items-center justify-between py-5 mx-auto md:flex-row max-w-7xl">
                 <div className="relative flex flex-col md:flex-row">
                     <Link to={'/'} className="flex items-center mb-5 font-medium text-gray-900 dark:text-gray-300 lg:w-auto lg:items-center lg:justify-center md:mb-0">
-                        <span className="mx-auto text-xl font-black leading-none text-gray-900 dark:text-gray-300 select-none">Spotify Heardle<span className="text-indigo-600 dark:text-indigo-200">.</span></span>
+                        <span className="mx-auto text-xl font-black leading-none text-gray-900 dark:text-gray-300 select-none">TuneHunt<span className="text-indigo-600 dark:text-indigo-200">.</span></span>
                     </Link>
                 </div>
                 <div className="flex flex-row gap-4 items-center">

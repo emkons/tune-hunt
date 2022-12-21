@@ -45,7 +45,7 @@ const Login = () => {
             <div className="container mx-auto px-4 py-14 sm:px-6 xl:px-12">
                 <div className="flex flex-col items-center justify-center space-y-6 text-center">
                     <h1 className="text-4xl font-bold tracking-normal dark:text-gray-300 sm:text-5xl lg:text-6xl">
-                        Spotify Heardle
+                        TuneHunt
                     </h1>
                     <p className="max-w-screen-sm text-lg text-gray-600 dark:text-gray-300 sm:text-2xl">
                         Select playlist, listen to part of the preview and try
@@ -53,7 +53,7 @@ const Login = () => {
                     </p>
                     <p className="max-w-screen-sm text-lg text-gray-600 dark:text-gray-300 sm:text-2xl">
                         To get started, click the below button to log into
-                        spotify
+                        Spotify
                     </p>
                     <div className="w-48 dark:text-gray-300">
                         <svg
